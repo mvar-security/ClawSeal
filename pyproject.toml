@@ -1,0 +1,86 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "clawseal"
+version = "1.0.0"
+description = "Cryptographically-verified memory for AI agents with QSEAL tamper-evidence"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+authors = [
+    {name = "Shawn Cohen", email = "shawn@universalmediaus.com"}
+]
+maintainers = [
+    {name = "Shawn Cohen", email = "shawn@universalmediaus.com"}
+]
+keywords = [
+    "ai",
+    "agents",
+    "memory",
+    "cryptography",
+    "qseal",
+    "hmac",
+    "yaml",
+    "scroll",
+    "identity",
+    "continuity"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Security :: Cryptography",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "black>=23.0",
+    "mypy>=1.0",
+    "ruff>=0.1.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/mvar-security/ClawSeal"
+Documentation = "https://github.com/mvar-security/ClawSeal#readme"
+Repository = "https://github.com/mvar-security/ClawSeal"
+Issues = "https://github.com/mvar-security/ClawSeal/issues"
+Changelog = "https://github.com/mvar-security/ClawSeal/blob/main/CHANGELOG.md"
+
+[project.scripts]
+clawseal = "clawseal.cli:main"
+
+[tool.setuptools]
+packages = ["clawseal", "clawseal.memory", "clawseal.security"]
+
+[tool.setuptools.package-dir]
+"clawseal" = "clawseal_core"
+"clawseal.memory" = "clawseal_core/memory"
+"clawseal.security" = "clawseal_core/security"
+
+[tool.black]
+line-length = 100
+target-version = ['py310']
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
