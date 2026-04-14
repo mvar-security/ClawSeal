@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # ClawSeal
 
 **Stateless LLMs become stateful agents with tamper-evident memory, zero database dependencies.**

@@ -212,7 +212,7 @@ def main():
     parser.add_argument(
         "--version",
         action="version",
-        version="ClawSeal 1.0.0"
+        version="ClawSeal 1.0.1"
     )
 
     subparsers = parser.add_subparsers(dest="command", help="Available commands")

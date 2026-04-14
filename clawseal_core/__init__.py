@@ -8,7 +8,7 @@ Copyright 2026 Shawn Cohen
 Licensed under Apache-2.0
 """
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 __author__ = "Shawn Cohen"
 __license__ = "Apache-2.0"
 
