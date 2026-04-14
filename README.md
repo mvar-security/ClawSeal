@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ClawSeal
 
 **Stateless LLMs become stateful agents with tamper-evident memory, zero database dependencies.**
@@ -170,8 +171,8 @@ Verification result:
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/clawzero/clawseal.git
-cd clawseal
+git clone https://github.com/mvar-security/ClawSeal.git
+cd ClawSeal
 
 # 2. Run setup script (auto-generates QSEAL_SECRET)
 ./setup.sh
@@ -349,7 +350,7 @@ If you use ClawSeal in research or production, please cite:
   title = {ClawSeal: Scroll-Native Memory for AI Agents},
   year = {2026},
   month = {April},
-  url = {https://github.com/clawzero/clawseal},
+  url = {https://github.com/mvar-security/ClawSeal},
   note = {SIP-0006: Scroll-Native Memory Architecture}
 }
 ```
@@ -370,8 +371,8 @@ See [LICENSE](LICENSE) for full text.
 **Email:** shawn@universalmediaus.com
 **GitHub:** [@Sdvegas21](https://github.com/Sdvegas21)
 
-**Issues:** [GitHub Issues](https://github.com/clawzero/clawseal/issues)
-**Discussions:** [GitHub Discussions](https://github.com/clawzero/clawseal/discussions)
+**Issues:** [GitHub Issues](https://github.com/mvar-security/ClawSeal/issues)
+**Discussions:** [GitHub Discussions](https://github.com/mvar-security/ClawSeal/discussions)
 
 ---
 
@@ -399,3 +400,6 @@ See [LICENSE](LICENSE) for full text.
 All claims proven with timestamped ground truth artifacts in `demo/expected_outputs/`.
 
 Run the demo. Verify the signatures. See for yourself.
+=======
+# ClawSeal
+>>>>>>> 8f9bd3e390e3793057c202a6b44f6f8888b57cf8
