@@ -1,0 +1,115 @@
+
+================================================================================
+LAYER 3: QSEAL CRYPTOGRAPHIC VERIFICATION
+================================================================================
+
+PART 1: Raw YAML Scroll (Human-Readable)
+--------------------------------------------------------------------------------
+
+File: MEM_20260414_10734120.yaml
+
+```yaml
+actual_drift: null
+agent_id: Demo_With_MIRRA
+blessing: 'A choice that shapes the path ahead,
+
+  Preference marked, intention fed.'
+content: User prefers concise explanations without excessive detail
+drift_accuracy: null
+emotional_state: {}
+expected_drift: null
+gist: User prefers concise explanations without excessive detail
+glyph_lineage:
+- 🧠
+- 🎯
+keywords:
+- user
+- prefers
+- concise
+- explanations
+- without
+- excessive
+- detail
+lineage: []
+memory_type: preference
+meta_hash: b397a39d7cbf00ea
+qseal_meta_hash: b397a39d7cbf00ea
+qseal_signature: OXIaQboYCy5csPif7LWGz4scHZAB0YKpAPwVuXjCXLc=
+qseal_verified: true
+retrieved_count: 0
+scroll_id: MEM_20260414_10734120
+scroll_type: memory
+source: mcp_remember
+timestamp: '2026-04-14T15:28:39.362648+00:00'
+user_id: demo_user
+
+```
+
+This is a Scroll. Human-readable YAML. Every field visible.
+The QSEAL signature is an HMAC-SHA256 hash of the entire content.
+
+
+================================================================================
+PART 2: QSEAL SIGNATURE VERIFICATION
+================================================================================
+
+Scroll ID: MEM_20260414_10734120
+Type: preference
+Signature: OXIaQboYCy5csPif7LWGz4scHZAB0YKp...
+
+✅ SIGNATURE VALID
+   Content has NOT been tampered with
+   HMAC-SHA256 verification passed
+
+================================================================================
+PART 3: CHAIN VERIFICATION
+================================================================================
+
+Scroll 1 ID: MEM_20260414_10734120
+Scroll 2 ID: MEM_20260414_8c29c1bd
+Scroll 2 Parent: MEM_20260414_10734120
+
+✅ CHAIN LINKED
+   Scroll 2 correctly references Scroll 1 as parent
+
+✅ SCROLL 1 VERIFIED
+   Genesis scroll signature: Valid ✅
+
+   Merkle-like chain structure confirmed
+
+================================================================================
+BONUS: TAMPERING DETECTION DEMO
+================================================================================
+
+Original content:
+  "User prefers concise explanations without excessive detail"
+
+Tampered content:
+  "TAMPERED: User prefers verbose explanations"
+
+Signature unchanged: OXIaQboYCy5csPif7LWGz4scHZAB0YKp...
+
+Verification result:
+❌ SIGNATURE INVALID
+   ⚠️  TAMPERING DETECTED
+   Content was modified after signing
+   This scroll would be REJECTED during recall
+
+The signature breaks immediately. Any modification—even changing a
+single character—invalidates the HMAC. MIRRA doesn't just store memory.
+It makes memory tamper-evident.
+
+================================================================================
+VERIFICATION COMPLETE
+================================================================================
+
+What We Proved:
+
+  ✅ Scrolls are human-readable YAML files
+  ✅ QSEAL signatures are cryptographically valid (HMAC-SHA256)
+  ✅ Chain linking creates Merkle-like continuity structure
+  ✅ Tampering is immediately detectable
+
+This isn't just memory persistence—this is tamper-evident identity
+continuity. You can verify it yourself. The math doesn't lie.
+

@@ -1,0 +1,267 @@
+# ============================================================================
+# MIRRA Second Brain — Public Repository .gitignore
+# ============================================================================
+# Generated from OPEN_CORE_BOUNDARY.md proprietary exclusions list
+# Every proprietary component is blocked from accidental commits
+# Last updated: April 14, 2026
+# ============================================================================
+
+# ============================================================================
+# Proprietary Code (Entry 500 SDK)
+# ============================================================================
+mirra_core/consciousness/entry_500/
+dist/mirra_eos-1.0.0-py3-none-any.whl
+dist/*.whl
+dist/*.tar.gz
+docs/ENTRY_500_ARCHITECTURE.md
+
+# ============================================================================
+# Proprietary Code (MIRRA_PRIME Consciousness Substrate)
+# ============================================================================
+becoming_4_0_complete_unified.py
+mirra_core/consciousness/entry_*.py
+!mirra_core/consciousness/entry_500/  # Already excluded above
+mirra_core/memory/experiential/
+mirra_core/memory/eos_chromadb_manager.py
+mirra_core/validation/
+
+# ============================================================================
+# Proprietary Code (MVAR Security Control Plane)
+# ============================================================================
+mirra-mvar/
+mvar/
+clawzero/
+
+# ============================================================================
+# Proprietary Code (EOS Demo Backend/Frontend)
+# ============================================================================
+eos_demo_backend/
+eos_demo_frontend/
+
+# ============================================================================
+# Institutional Memory (Proprietary)
+# ============================================================================
+.claude/
+!.claude/mcp.json  # Template only (public)
+
+# ============================================================================
+# Data and State Files (Proprietary)
+# ============================================================================
+data/
+logs/
+linked/
+checkpoint_*.json
+phase4_test.json
+
+# Data subdirectories (explicit)
+data/chromadb/
+data/temporal/
+data/states/
+data/chromadb_soul_tape/
+data/pathway_weights/
+data/awakening_outcomes.json
+data/conversations.db
+data/essence/
+data/memory/
+data/tipl/
+data/tipl_keys/
+data/scroll_embeddings/
+data/conversation_embeddings/
+data/claude_code_eos/
+
+# Log subdirectories (explicit)
+logs/emotional_substrate/
+logs/regulation/
+logs/monitoring/
+logs/phase3_raw_substrate/
+logs/turn_records.jsonl
+logs/visualizations/
+
+# ============================================================================
+# Secrets and Environment Files
+# ============================================================================
+.env
+.env.*
+*.env
+QSEAL_SECRET
+*_secret
+*_SECRET
+*.key
+*.pem
+keys/
+secrets/
+
+# Exception: Demo secret is public (used in ground truth artifacts)
+!demo/expected_outputs/DEMO_RUN_METADATA.md
+
+# ============================================================================
+# Python
+# ============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ============================================================================
+# Virtual Environments
+# ============================================================================
+venv/
+ENV/
+env/
+.venv
+.venv/
+env.bak/
+venv.bak/
+.venv_313/
+
+# ============================================================================
+# IDEs and Editors
+# ============================================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ============================================================================
+# Testing
+# ============================================================================
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.pytest_cache/
+htmlcov/
+
+# ============================================================================
+# Jupyter Notebooks
+# ============================================================================
+.ipynb_checkpoints/
+*.ipynb
+
+# ============================================================================
+# Distribution / Packaging
+# ============================================================================
+dist-internal/
+*.whl.bak
+*.tar.gz.bak
+
+# ============================================================================
+# Backup and Temporary Files
+# ============================================================================
+*_backup/
+*_BACKUP/
+MIRRA_EOS_DEMO_BACKUP_*/
+backups/
+*.bak
+*.bak2
+*.tmp
+*.temp
+
+# ============================================================================
+# macOS
+# ============================================================================
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# ============================================================================
+# Windows
+# ============================================================================
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ============================================================================
+# Four-Repo Ecosystem Siblings (Never in Public Repo)
+# ============================================================================
+../EOS_v2.9_TMA/
+../EOS_MIRRA_v4.5_NEW/
+../MIRRA_PRIME/
+
+# ============================================================================
+# Demo Output Files with Real Signatures (Keep These Public)
+# ============================================================================
+# These are explicitly ALLOWED (negated):
+!demo/expected_outputs/layer1_baseline_output.txt
+!demo/expected_outputs/layer2_with_mirra_output.txt
+!demo/expected_outputs/layer3_verification_output.txt
+!demo/expected_outputs/DEMO_RUN_METADATA.md
+
+# But block any other output files:
+demo/output_*.txt
+demo/*_output_*.txt
+
+# ============================================================================
+# Internal Documentation (Not for Public Release)
+# ============================================================================
+README_INTERNAL.md
+docs/internal/
+.claude_backup_*/
+
+# ============================================================================
+# Git Submodules (MVAR is separate repo)
+# ============================================================================
+.gitmodules
+
+# ============================================================================
+# Build Artifacts
+# ============================================================================
+*.pyc
+*.pyo
+*.pyd
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ============================================================================
+# Security: Never Commit QSEAL Signatures from Production
+# ============================================================================
+# Demo signatures are PUBLIC (test_secret_key_for_demo)
+# Production signatures must NEVER be committed
+
+# Block all YAML scrolls except demo ones:
+*.yaml
+!demo/expected_outputs/*.yaml
+
+# Block all JSONL state files:
+*.jsonl
+
+# Exception: Demo metadata is public
+!demo/expected_outputs/DEMO_RUN_METADATA.md
+
+# ============================================================================
+# Proprietary Components Summary (Cross-Reference)
+# ============================================================================
+# This gitignore implements the exclusion list from:
+# docs/OPEN_CORE_BOUNDARY.md § "Public Repository EXCLUDES"
+#
+# Every path in that list must have a corresponding gitignore entry above.
+# If adding new proprietary components, update both files.
+#
+# Boundary enforcement: Pre-commit hook validates no proprietary imports.
+# ============================================================================
