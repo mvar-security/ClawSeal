@@ -40,6 +40,30 @@ For the full reproducible 3-layer evidence demo, use the repository workflow bel
 
 ---
 
+## The mvar-security Stack
+
+ClawSeal is part of a three-layer AI security infrastructure:
+
+| Layer | Tool | What it secures |
+|-------|------|-----------------|
+| **Runtime** | [MVAR](https://github.com/mvar-security/mvar) | How information flows through the agent |
+| **Execution** | [ClawZero](https://github.com/mvar-security/clawzero) | What the agent does |
+| **Memory** | **ClawSeal** (this repo) | What the agent remembers |
+
+**ClawSeal is powered by MVAR's QSEAL cryptographic signing engine.**
+
+For full IFC-based execution enforcement, install MVAR:
+```bash
+pip install mvar-security
+```
+
+For OpenClaw execution boundary protection, install ClawZero:
+```bash
+pip install clawzero
+```
+
+---
+
 
 ## Claims and Evidence
 
