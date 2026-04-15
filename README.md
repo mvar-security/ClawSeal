@@ -28,6 +28,18 @@ clawseal verify
 
 For the full reproducible 3-layer evidence demo, use the repository workflow below.
 
+---
+
+## OpenClaw Integration
+
+**ClawSeal now has native OpenClaw support.** Add persistent, cryptographically-verified memory to OpenClaw agents in under 5 minutes.
+
+- **What it does**: Transforms OpenClaw from stateless chat bot to persistent AI assistant with QSEAL-signed memories
+- **How to install**: `cd openclaw-plugin && bash install.sh` (auto-registers daemon, zero manual steps)
+- **Full guide**: See [openclaw-plugin/](openclaw-plugin/) for complete integration documentation
+
+---
+
 
 ## Claims and Evidence
 
