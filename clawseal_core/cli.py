@@ -152,7 +152,7 @@ def verify_command():
     # Check ClawSeal package
     print("\n5. ClawSeal package:")
     try:
-        from clawseal_core import ScrollMemoryStore, __version__
+        from clawseal import ScrollMemoryStore, __version__
         print(f"   ✅ ClawSeal {__version__} importable")
     except ImportError as e:
         print(f"   ❌ Import failed: {e}")
@@ -212,7 +212,7 @@ def main():
     parser.add_argument(
         "--version",
         action="version",
-        version="ClawSeal 1.0.1"
+        version="ClawSeal 1.0.2"
     )
 
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
