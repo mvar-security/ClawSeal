@@ -1,6 +1,12 @@
 """ClawSeal security module - QSEAL cryptographic signing and verification"""
 
-from clawseal.security.qseal_engine import sign_scroll, verify_signature
-from clawseal.security.qseal_utils import get_qseal_secret, generate_scroll_id
+from clawseal.security.qseal_engine import sign_entry, sign_scroll, verify_signature
+from clawseal.security.qseal_utils import get_qseal_secret, compute_meta_hash
 
-__all__ = ["sign_scroll", "verify_signature", "get_qseal_secret", "generate_scroll_id"]
+__all__ = [
+    "sign_entry",
+    "sign_scroll",
+    "verify_signature",
+    "get_qseal_secret",
+    "compute_meta_hash",
+]

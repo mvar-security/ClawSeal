@@ -10,7 +10,7 @@ import os
 import base64
 import hmac
 from datetime import datetime, timezone
-from clawseal_core.security.qseal_utils import compute_meta_hash, inject_derived_fields, prepare_for_signature, verify_meta_hash
+from .qseal_utils import compute_meta_hash, inject_derived_fields, prepare_for_signature, verify_meta_hash
 
 # Default signing secret (production mode requires this to be set)
 # For MCP servers, we allow this to be None and raise error only when actually used
@@ -232,3 +232,8 @@ class QSEALEngine:
     def sign_entry(self, data):
         """Alias for sign_transition"""
         return self.sign_transition(data)
+
+
+def sign_scroll(entry: dict, agent_id: str = None) -> dict:
+    """Backward-compatible alias for sign_entry."""
+    return sign_entry(entry, agent_id=agent_id)

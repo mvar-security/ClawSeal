@@ -21,7 +21,7 @@ import uuid
 import re
 
 # QSEAL integration
-from clawseal_core.security.qseal_engine import sign_entry, link_signatures, verify_signature, QSEAL_ENABLED
+from ..security.qseal_engine import sign_entry, link_signatures, verify_signature, QSEAL_ENABLED
 
 
 # ============================================================================
