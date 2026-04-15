@@ -184,18 +184,6 @@ See [OPENCLAW_INTEGRATION.md](OPENCLAW_INTEGRATION.md) for detailed integration 
 - Network-level attacks (use HTTPS for remote deployments)
 - Multi-party verification (single shared secret model)
 
-### VirusTotal / Security Scanner Warnings
-
-**ClawSeal may be flagged by automated security scanners** because it uses legitimate cryptographic operations:
-- HMAC-SHA256 key generation and signing
-- Localhost API calls (Flask server on port 5002)
-- File I/O with chmod 600 operations
-- Random secret generation (`secrets.token_hex`)
-
-**This is a feature, not a bug.** ClawSeal is a security tool that performs real cryptographic work. The flag proves ClawSeal isn't just storing plaintext — it's doing actual HMAC signing for tamper-evidence.
-
-**All code is open source**: Review at [github.com/mvar-security/ClawSeal](https://github.com/mvar-security/ClawSeal) before installing. Transparency about why the flag appears builds trust.
-
 ---
 
 ## Troubleshooting

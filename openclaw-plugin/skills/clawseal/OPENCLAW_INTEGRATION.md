@@ -302,16 +302,6 @@ systemctl --user restart clawseal-server
 
 **Yes.** Generate a production secret (`clawseal init`), restart the server. Existing demo-mode memories remain but are marked as `demo_ephemeral`.
 
-### Why does VirusTotal / clawhub flag ClawSeal as suspicious?
-
-**Because ClawSeal does real cryptographic work.** Security scanners flag:
-- HMAC-SHA256 key generation
-- Localhost API calls (Flask server)
-- Random secret generation
-- chmod 600 file operations
-
-**This is expected and correct.** ClawSeal is a security tool, not malware. All code is open source at [github.com/mvar-security/ClawSeal](https://github.com/mvar-security/ClawSeal). Review before installing — transparency is the feature.
-
 ---
 
 ## Next Steps
