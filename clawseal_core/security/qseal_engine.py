@@ -1,7 +1,7 @@
 """
-mirra_core/security/qseal_engine.py
+clawseal_core/security/qseal_engine.py
 QSEAL Engine – Core Signing and Verification Logic
-Handles creation and verification of tamper-evident signature chains for MIRRA systems.
+Handles creation and verification of tamper-evident signature chains for ClawSeal systems.
 """
 
 import json
@@ -10,27 +10,31 @@ import os
 import base64
 import hmac
 from datetime import datetime, timezone
-from .qseal_utils import compute_meta_hash, inject_derived_fields, prepare_for_signature, verify_meta_hash
+from .qseal_utils import (
+    compute_meta_hash,
+    inject_derived_fields,
+    prepare_for_signature,
+    verify_meta_hash,
+    get_qseal_secret,
+    is_qseal_enabled,
+)
 
-# Default signing secret (production mode requires this to be set)
-# For MCP servers, we allow this to be None and raise error only when actually used
-QSEAL_SECRET = os.getenv("QSEAL_SECRET")
-QSEAL_ENABLED = QSEAL_SECRET is not None
 
+
+
+def qseal_enabled() -> bool:
+    """Backward-compatible helper for runtime QSEAL availability checks."""
+    return is_qseal_enabled()
 
 def generate_signature(payload: dict) -> str:
     """
     Generate an HMAC-SHA256 signature for the given payload.
     Uses canonical JSON string with sorted keys.
     """
-    if not QSEAL_ENABLED:
-        raise RuntimeError(
-            "QSEAL_SECRET environment variable must be set. "
-            "Generate one with: openssl rand -hex 32"
-        )
+    secret = get_qseal_secret(require=True)
     canonical = prepare_for_signature(payload)
     signature = hmac.new(
-        QSEAL_SECRET.encode("utf-8"),
+        secret.encode("utf-8"),
         canonical.encode("utf-8"),
         hashlib.sha256
     ).digest()
@@ -141,7 +145,7 @@ def qseal_info() -> dict:
     return {
         "module": "qseal_engine",
         "version": "1.0.0",
-        "description": "Core cryptographic signing and verification for MIRRA QSEAL",
+        "description": "Core cryptographic signing and verification for ClawSeal QSEAL",
         "functions": [
             "generate_signature",
             "sign_entry",

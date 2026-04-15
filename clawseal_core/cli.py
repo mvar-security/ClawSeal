@@ -16,6 +16,16 @@ import os
 import sys
 import subprocess
 from pathlib import Path
+from importlib import metadata
+
+
+def _installed_version() -> str:
+    """Return installed package version for CLI banner/version output."""
+    try:
+        return metadata.version("clawseal")
+    except Exception:
+        return "dev"
+
 
 
 def init_command():
@@ -154,7 +164,7 @@ def verify_command():
     try:
         from clawseal import ScrollMemoryStore, __version__
         print(f"   ✅ ClawSeal {__version__} importable")
-    except ImportError as e:
+    except Exception as e:
         print(f"   ❌ Import failed: {e}")
         errors.append("ClawSeal package not importable")
 
@@ -185,9 +195,9 @@ def demo_command():
     # Check QSEAL_SECRET
     secret = os.getenv("QSEAL_SECRET")
     if not secret:
-        print("❌ Error: QSEAL_SECRET not set")
-        print("   Run: clawseal init")
-        sys.exit(1)
+        os.environ["QSEAL_SECRET"] = "test_secret_key_for_demo"
+        print("⚠️  QSEAL_SECRET not set; using demo secret for this run only")
+        print("   Run `clawseal init` for production configuration")
 
     print("\nRunning three-layer demo...\n")
 
@@ -212,7 +222,7 @@ def main():
     parser.add_argument(
         "--version",
         action="version",
-        version="ClawSeal 1.0.2"
+        version=f"ClawSeal {_installed_version()}"
     )
 
     subparsers = parser.add_subparsers(dest="command", help="Available commands")

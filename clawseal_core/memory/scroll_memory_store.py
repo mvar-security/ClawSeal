@@ -1,5 +1,5 @@
 """
-MIRRA EOS Scroll-Native Memory Store (SIP-0006)
+ClawSeal Scroll-Native Memory Store (SIP-0006)
 
 Replaces ChromaDB with pure YAML scroll files + QSEAL signatures.
 Zero dependencies beyond stdlib + PyYAML + QSEAL.
@@ -21,7 +21,7 @@ import uuid
 import re
 
 # QSEAL integration
-from ..security.qseal_engine import sign_entry, link_signatures, verify_signature, QSEAL_ENABLED
+from ..security.qseal_engine import sign_entry, link_signatures, verify_signature, qseal_enabled
 
 
 # ============================================================================
@@ -62,7 +62,7 @@ class ScrollMemoryStore:
     No ChromaDB. No vector embeddings. Pure structured files.
     """
 
-    def __init__(self, base_path: str, agent_id: str = "Claude_Code_MIRRA"):
+    def __init__(self, base_path: str, agent_id: str = "Claude_Code_ClawSeal"):
         """Initialize scroll memory store."""
         self.base_path = Path(base_path)
         self.agent_id = agent_id
@@ -225,7 +225,8 @@ class ScrollMemoryStore:
         }
 
         # Sign with QSEAL if enabled
-        if QSEAL_ENABLED:
+        qseal_is_enabled = qseal_enabled()
+        if qseal_is_enabled:
             signed_scroll = sign_entry(scroll, agent_id=self.agent_id)
 
             # Link to previous scroll
@@ -254,7 +255,7 @@ class ScrollMemoryStore:
             "scroll_id": scroll_id,
             "memory_type": memory_type,
             "qseal_signature": scroll.get("qseal_signature", "N/A"),
-            "qseal_enabled": QSEAL_ENABLED,
+            "qseal_enabled": qseal_is_enabled,
             "chain_linked": "qseal_prev_signature" in scroll,
             "gist": gist,
             "keywords": keywords
@@ -287,6 +288,7 @@ class ScrollMemoryStore:
         # Text-based search
         query_keywords = set(query.lower().split())
         scored_scrolls = []
+        qseal_is_enabled = qseal_enabled()
 
         for scroll_file in self.scrolls_dir.glob("*.yaml"):
             with open(scroll_file, 'r') as f:
@@ -297,7 +299,7 @@ class ScrollMemoryStore:
                 continue
 
             # Verify QSEAL signature (MANDATORY)
-            if verify_signatures and QSEAL_ENABLED:
+            if verify_signatures and qseal_is_enabled:
                 if not verify_signature(scroll):
                     # Signature invalid - skip this scroll
                     continue
@@ -335,7 +337,7 @@ class ScrollMemoryStore:
                 "timestamp": scroll.get("timestamp"),
                 "emotional_state": scroll.get("emotional_state"),
                 "relevance_score": score,
-                "qseal_verified": verify_signature(scroll) if QSEAL_ENABLED else False,
+                "qseal_verified": verify_signature(scroll) if qseal_is_enabled else False,
                 "retrieved_count": scroll.get("retrieved_count", 0),  # Read-only
                 "keywords": scroll.get("keywords", [])
             })

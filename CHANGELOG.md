@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0] - 2026-04-15
+
+### Changed
+
+- Deferred QSEAL secret enforcement from import-time to operation-time for better onboarding UX.
+- Kept fail-closed behavior for cryptographic operations: signing/strict verification still require `QSEAL_SECRET`.
+- Updated CLI to report installed package version dynamically.
+- Improved demo ergonomics: `clawseal demo` now runs with an explicit demo secret when `QSEAL_SECRET` is unset.
+
+### Documentation
+
+- README now has a PyPI-first quick start path.
+- Standardized public branding from MIRRA-oriented phrasing to ClawSeal in demo and runner text.
+- Added `demo_layer2_with_clawseal.py` alias while retaining legacy script compatibility.
+
+---
+
 ## [1.0.0] - 2026-04-14
 
 ### Summary

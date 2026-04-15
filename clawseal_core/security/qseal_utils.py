@@ -1,21 +1,6 @@
-"""
-mirra_core/security/qseal_utils.py
-QSEAL Utility Functions
-Handles hash computation, field injection, and signature metadata prep.
-"""
+"""QSEAL utility helpers for canonicalization and metadata."""
 
 import os
-
-# CRITICAL: QSEAL_SECRET must be set before any QSEAL operations
-# No fallback. No dev default. Fail-closed security model.
-QSEAL_SECRET = os.getenv("QSEAL_SECRET")
-if not QSEAL_SECRET:
-    raise RuntimeError(
-        "QSEAL_SECRET not set. "
-        "Run: export QSEAL_SECRET=$(openssl rand -hex 32) "
-        "and add it to your shell profile. "
-        "See CLAUDE_CODE_MCP_SETUP.md for full setup instructions."
-    )
 
 import json
 import hashlib
@@ -29,7 +14,7 @@ def compute_meta_hash(data: dict) -> str:
     Includes QSEAL_SECRET in the hash input for extra entropy.
     """
     canonical_json = json.dumps(data, sort_keys=True, ensure_ascii=False)
-    combined = canonical_json + QSEAL_SECRET
+    combined = canonical_json + get_qseal_secret(require=True)
     return hashlib.sha256(combined.encode("utf-8")).hexdigest()[:16]
 
 
@@ -84,11 +69,33 @@ def qseal_info() -> dict:
             "inject_derived_fields",
             "prepare_for_signature",
             "verify_meta_hash",
-            "timestamp_iso"
+            "timestamp_iso",
+            "is_qseal_enabled",
+            "get_qseal_secret",
         ]
     }
 
 
-# Helper to access QSEAL_SECRET elsewhere
-def get_qseal_secret() -> str:
-    return QSEAL_SECRET
+def is_qseal_enabled() -> bool:
+    """Return True when QSEAL signing is configured in env."""
+    return bool(os.getenv("QSEAL_SECRET"))
+
+
+def get_qseal_secret(require: bool = True) -> str | None:
+    """
+    Read QSEAL secret from environment.
+
+    When ``require`` is True, missing secret raises a fail-closed error.
+    When ``require`` is False, returns None if not configured.
+    """
+    secret = os.getenv("QSEAL_SECRET")
+    if secret:
+        return secret
+    if not require:
+        return None
+    raise RuntimeError(
+        "QSEAL_SECRET not set. "
+        "Run: export QSEAL_SECRET=$(openssl rand -hex 32) "
+        "then run: clawseal verify. "
+        "Docs: https://github.com/mvar-security/ClawSeal#readme"
+    )

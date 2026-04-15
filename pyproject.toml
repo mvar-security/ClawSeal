@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "clawseal"
-version = "1.0.2"
+version = "1.1.0"
 description = "Cryptographically-verified memory for AI agents with QSEAL tamper-evidence"
 readme = "README.md"
 requires-python = ">=3.10"

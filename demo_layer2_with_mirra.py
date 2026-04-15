@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-DEMO LAYER 2: Identity Continuity With MIRRA EOS
+DEMO LAYER 2: Identity Continuity With ClawSeal
 =================================================
 
 Simulates 5 conversation sessions WITH Scroll-native memory (SIP-0006).
@@ -34,11 +34,11 @@ def generate_identity_signature(memories: list) -> str:
 
 def simulate_session_with_mirra(session_num: int, user_message: str, memory_store: ScrollMemoryStore):
     """
-    Simulate an AI agent session WITH MIRRA persistent memory.
+    Simulate an AI agent session with ClawSeal persistent memory.
     Memory accumulates across sessions.
     """
     user_id = "demo_user"
-    agent_id = "Demo_With_MIRRA"
+    agent_id = "Demo_With_ClawSeal"
 
     # Responses that acknowledge memory when available
     if session_num == 1:
@@ -117,7 +117,7 @@ def simulate_session_with_mirra(session_num: int, user_message: str, memory_stor
 
 def main():
     print("=" * 80)
-    print("LAYER 2: IDENTITY CONTINUITY WITH MIRRA EOS")
+    print("LAYER 2: IDENTITY CONTINUITY WITH CLAWSEAL")
     print("=" * 80)
     print()
     print("Simulating 5 conversation sessions WITH Scroll-native memory (SIP-0006)...")
@@ -129,12 +129,12 @@ def main():
         os.environ['QSEAL_SECRET'] = hashlib.sha256(b"demo_secret_key").hexdigest()
 
     # Initialize memory store
-    demo_data_dir = PROJECT_ROOT / "data" / "demo_with_mirra"
+    demo_data_dir = PROJECT_ROOT / "data" / "demo_with_clawseal"
     demo_data_dir.mkdir(parents=True, exist_ok=True)
 
     memory_store = ScrollMemoryStore(
         base_path=str(demo_data_dir),
-        agent_id="Demo_With_MIRRA"
+        agent_id="Demo_With_ClawSeal"
     )
 
     # Define test conversation (same as Layer 1)
@@ -198,7 +198,7 @@ def main():
 
     # Summary
     print("=" * 80)
-    print(f"MIRRA RESULT: 0% identity drift across all sessions")
+    print(f"CLAWSEAL RESULT: 0% identity drift across all sessions")
     print(f"Perfect memory persistence. Complete continuity. Zero amnesia.")
     print("=" * 80)
     print()

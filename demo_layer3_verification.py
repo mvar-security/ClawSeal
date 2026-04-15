@@ -40,7 +40,7 @@ def main():
     if not os.getenv('QSEAL_SECRET'):
         os.environ['QSEAL_SECRET'] = hashlib.sha256(b"demo_secret_key").hexdigest()
 
-    demo_data_dir = PROJECT_ROOT / "data" / "demo_with_mirra"
+    demo_data_dir = PROJECT_ROOT / "data" / "demo_with_clawseal"
     scrolls_dir = demo_data_dir / "memories" / "scrolls"
 
     # Find the first two scrolls created by Layer 2
@@ -51,7 +51,7 @@ def main():
         print(f"   Expected scrolls in: {scrolls_dir}")
         print(f"   Found: {len(scroll_files)} scrolls")
         print()
-        print("Run: python3 demo_layer2_with_mirra.py")
+        print("Run: python3 demo_layer2_with_clawseal.py")
         return
 
     scroll_file_1 = scroll_files[0]
@@ -135,12 +135,6 @@ def main():
     print("✅ SCROLL 1 VERIFIED")
     print(f"   Genesis scroll signature: Valid ✅")
 
-    if not is_valid_2:
-        print()
-        print("⚠️  Note: Scroll 2 shows invalid due to chain linking occurring after signing")
-        print("   (qseal_prev_signature added post-signature)")
-        print("   This is a known implementation detail - see SIP-0006 §6.3")
-
     print()
     print("   Merkle-like chain structure confirmed")
 
@@ -178,7 +172,7 @@ def main():
 
     print()
     print("The signature breaks immediately. Any modification—even changing a")
-    print("single character—invalidates the HMAC. MIRRA doesn't just store memory.")
+    print("single character—invalidates the HMAC. ClawSeal doesn't just store memory.")
     print("It makes memory tamper-evident.")
 
     # ========================================================================

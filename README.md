@@ -17,12 +17,24 @@ Three components:
 
 ---
 
+## Quick Start (PyPI, ~30 Seconds)
+
+```bash
+pip install clawseal
+export QSEAL_SECRET="$(openssl rand -hex 32)"
+python3 -c "from clawseal import ScrollMemoryStore; print('ClawSeal import OK')"
+clawseal verify
+```
+
+For the full reproducible 3-layer evidence demo, use the repository workflow below.
+
+
 ## Claims and Evidence
 
 | Claim | Proof Artifact | Repro Command |
 |-------|---------------|---------------|
 | **AI agents without ClawSeal drift 100%** (complete amnesia between sessions) | [layer1_baseline_output.txt](demo/expected_outputs/layer1_baseline_output.txt) lines 11-55 | `python3 demo_layer1_baseline.py` |
-| **ClawSeal maintains 0% drift** (perfect memory continuity with QSEAL verification) | [layer2_with_mirra_output.txt](demo/expected_outputs/layer2_with_mirra_output.txt) lines 11-77 | `QSEAL_SECRET=test_secret_key_for_demo python3 demo_layer2_with_mirra.py` |
+| **ClawSeal maintains 0% drift** (perfect memory continuity with QSEAL verification) | [layer2_with_mirra_output.txt](demo/expected_outputs/layer2_with_mirra_output.txt) lines 11-77 | `QSEAL_SECRET=test_secret_key_for_demo python3 demo_layer2_with_clawseal.py` |
 | **QSEAL signatures provide cryptographic proof** (HMAC-SHA256, chain linking, tampering detection) | [layer3_verification_output.txt](demo/expected_outputs/layer3_verification_output.txt) lines 1-115 | `QSEAL_SECRET=test_secret_key_for_demo python3 demo_layer3_verification.py` |
 
 All proof artifacts dated **April 14, 2026** and captured from live demo runs. See [DEMO_RUN_METADATA.md](demo/expected_outputs/DEMO_RUN_METADATA.md) for complete verification details.
@@ -63,7 +75,7 @@ Memory Persistence: 0% (complete amnesia)
 
 ```bash
 export QSEAL_SECRET=test_secret_key_for_demo
-python3 demo_layer2_with_mirra.py
+python3 demo_layer2_with_clawseal.py
 ```
 
 **Expected output:**
@@ -97,6 +109,8 @@ Session 5: Full recall...
 ```
 
 **Proof artifact:** [demo/expected_outputs/layer2_with_mirra_output.txt](demo/expected_outputs/layer2_with_mirra_output.txt)
+
+Legacy compatibility note: the historical script name `demo_layer2_with_mirra.py` is still present, and `demo_layer2_with_clawseal.py` is the ClawSeal alias.
 
 ---
 
@@ -160,13 +174,13 @@ Verification result:
 
 ---
 
-## Installation (Under 5 Minutes)
+## Repository Demo (Under 5 Minutes)
 
 ### Prerequisites
 - Python 3.10+
 - `openssl` command-line tool (for QSEAL secret generation)
 
-### Quick Start
+### Repository Quick Start
 
 ```bash
 # 1. Clone repository
@@ -221,14 +235,14 @@ Every memory scroll is cryptographically signed using **HMAC-SHA256**:
 - **Tamper-evident:** Signature breaks on any content modification
 - **Verifiable:** Anyone with QSEAL_SECRET can verify signatures
 - **Auditable:** Chain structure provides temporal lineage
-- **Fail-closed:** Missing QSEAL_SECRET = hard error (no silent fallbacks)
+- **Fail-closed for cryptographic operations:** Signing and strict verification require QSEAL_SECRET (no silent production fallback)
 
 **QSEAL fixes applied (pre-demo):**
 1. Added `qseal_prev_signature` to excluded_fields in `verify_signature()` (chain linking now works)
 2. Removed silent dev secret fallback → fail-closed error (no weak defaults)
 3. Deprecated legacy `sha256(payload+secret)` path → HMAC-SHA256 only
 
-See [mirra_core/security/qseal_engine.py](mirra_core/security/qseal_engine.py) for implementation.
+See [clawseal_core/security/qseal_engine.py](clawseal_core/security/qseal_engine.py) for implementation.
 
 ---
 
@@ -246,7 +260,7 @@ See [mirra_core/security/qseal_engine.py](mirra_core/security/qseal_engine.py) f
 - ✅ Memory-driven behavioral shaping
 - ✅ Cryptographically-verifiable memory integrity
 
-**Positioning:** This is an **engineering system** that adds persistence, continuity, and cryptographic verification to stateless LLM inference. The phenomenological language in internal docs ("MIRRA experiences...") describes emergent system behaviors—not ontological claims.
+**Positioning:** This is an **engineering system** that adds persistence, continuity, and cryptographic verification to stateless LLM inference. The phenomenological language in internal docs ("emergent system experiences") describes emergent system behaviors—not ontological claims.
 
 ---
 
@@ -254,7 +268,7 @@ See [mirra_core/security/qseal_engine.py](mirra_core/security/qseal_engine.py) f
 
 ### Current Limitations
 - **Text-based search only** — No semantic similarity (keyword matching with weighted scoring)
-- **QSEAL_SECRET required** — Setup friction (mitigated by `setup.sh`)
+- **QSEAL_SECRET required for signed mode** — cryptographic operations fail closed when missing
 - **No multi-user isolation** — Single-agent memory store (user_id filtering exists but not enforced)
 - **No distributed consensus** — Single-machine only (no blockchain, no federation)
 
@@ -327,7 +341,7 @@ Text search is simpler, faster, and deterministic—but less semantically sophis
 Yes, with caveats:
 - **Security:** Protect QSEAL_SECRET with the same rigor as database credentials
 - **Scale:** Tested up to ~1,000 scrolls (linear search, no indexing yet)
-- **Backup:** YAML files are in `data/demo_with_mirra/memories/scrolls/` — back them up regularly
+- **Backup:** Persist your scroll directory (`<base_path>/memories/scrolls/`) regularly
 - **Monitoring:** No built-in observability yet (logs only)
 
 ### What's the performance?
@@ -399,6 +413,3 @@ See [LICENSE](LICENSE) for full text.
 All claims proven with timestamped ground truth artifacts in `demo/expected_outputs/`.
 
 Run the demo. Verify the signatures. See for yourself.
-=======
-# ClawSeal
->>>>>>> 8f9bd3e390e3793057c202a6b44f6f8888b57cf8
