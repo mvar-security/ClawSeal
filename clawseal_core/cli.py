@@ -18,6 +18,8 @@ import subprocess
 from pathlib import Path
 from importlib import metadata
 
+DEMO_SECRET_PATH = Path.home() / ".clawseal" / "demo_secret"
+
 
 def _installed_version() -> str:
     """Return installed package version for CLI banner/version output."""
@@ -123,18 +125,21 @@ def verify_command():
         print(f"   ❌ Python {py_version.major}.{py_version.minor}.{py_version.micro} (requires 3.10+)")
         errors.append("Python version too old")
 
-    # Check QSEAL_SECRET
-    print("\n2. QSEAL_SECRET:")
+    # Check QSEAL mode
+    print("\n2. QSEAL mode:")
     secret = os.getenv("QSEAL_SECRET")
-    if not secret:
-        print("   ❌ Not set")
-        errors.append("QSEAL_SECRET not set")
-    elif secret == "test_secret_key_for_demo":
-        print("   ⚠️  Using demo secret (DO NOT use in production)")
-    elif len(secret) >= 32:
-        print(f"   ✅ Set (length: {len(secret)})")
+    if secret:
+        if secret == "test_secret_key_for_demo":
+            print("   ⚠️  Using explicit demo secret env value")
+        elif len(secret) >= 32:
+            print(f"   ✅ Production secret set (length: {len(secret)})")
+        else:
+            print(f"   ⚠️  Production secret set but short (length: {len(secret)}, recommend 64+)")
+    elif DEMO_SECRET_PATH.exists():
+        print(f"   ⚠️  Demo mode active via {DEMO_SECRET_PATH}")
     else:
-        print(f"   ⚠️  Set but short (length: {len(secret)}, recommend 64+)")
+        print("   ⚠️  No production secret set; demo mode will initialize on first signed write")
+        print("      Run `clawseal init` for production configuration")
 
     # Check PyYAML
     print("\n3. PyYAML dependency:")

@@ -7,14 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.1.0] - 2026-04-15
+## [1.1.1] - 2026-04-15
 
 ### Changed
 
 - Deferred QSEAL secret enforcement from import-time to operation-time for better onboarding UX.
-- Kept fail-closed behavior for cryptographic operations: signing/strict verification still require `QSEAL_SECRET`.
-- Updated CLI to report installed package version dynamically.
-- Improved demo ergonomics: `clawseal demo` now runs with an explicit demo secret when `QSEAL_SECRET` is unset.
+- Added persistent demo signing mode (`~/.clawseal/demo_secret`, chmod 600) with non-breaking runtime fallback.
+- Added explicit signed-artifact mode markers: `qseal_mode` and `qseal_production`.
+- Removed remaining library print side effects in QSEAL engine paths (warnings/logging only).
 
 ### Documentation
 

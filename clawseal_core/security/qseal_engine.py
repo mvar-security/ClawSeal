@@ -1,24 +1,25 @@
-"""
-clawseal_core/security/qseal_engine.py
-QSEAL Engine – Core Signing and Verification Logic
-Handles creation and verification of tamper-evident signature chains for ClawSeal systems.
-"""
+"""QSEAL Engine – signing and verification logic for ClawSeal."""
 
-import json
-import hashlib
-import os
+from __future__ import annotations
+
 import base64
+import hashlib
 import hmac
+import json
+import logging
+import warnings
 from datetime import datetime, timezone
+
 from .qseal_utils import (
-    compute_meta_hash,
+    get_qseal_context,
+    get_qseal_secret,
     inject_derived_fields,
+    is_qseal_enabled,
     prepare_for_signature,
     verify_meta_hash,
-    get_qseal_secret,
-    is_qseal_enabled,
 )
 
+logger = logging.getLogger(__name__)
 
 
 
@@ -26,27 +27,23 @@ def qseal_enabled() -> bool:
     """Backward-compatible helper for runtime QSEAL availability checks."""
     return is_qseal_enabled()
 
+
+
 def generate_signature(payload: dict) -> str:
-    """
-    Generate an HMAC-SHA256 signature for the given payload.
-    Uses canonical JSON string with sorted keys.
-    """
-    secret = get_qseal_secret(require=True)
+    """Generate HMAC-SHA256 signature over canonical payload."""
+    secret = get_qseal_context(require=True)["secret"]
     canonical = prepare_for_signature(payload)
     signature = hmac.new(
         secret.encode("utf-8"),
         canonical.encode("utf-8"),
-        hashlib.sha256
+        hashlib.sha256,
     ).digest()
     return base64.b64encode(signature).decode("utf-8")
 
 
-def sign_entry(entry: dict, agent_id: str = None) -> dict:
-    """
-    Sign a ledger entry with QSEAL.
-    Injects derived fields and computes signature over canonical form.
-    Returns a signed entry dictionary with qseal_signature.
-    """
+
+def sign_entry(entry: dict, agent_id: str | None = None) -> dict:
+    """Sign an entry and inject QSEAL metadata."""
     enriched = inject_derived_fields(entry, agent_id=agent_id)
     signature = generate_signature(enriched)
     enriched["qseal_signature"] = signature
@@ -55,80 +52,60 @@ def sign_entry(entry: dict, agent_id: str = None) -> dict:
     return enriched
 
 
-def verify_signature(entry: dict) -> bool:
-    """
-    Verify the HMAC signature of an entry.
-    Returns True if valid, False otherwise.
 
-    CRITICAL: Only excludes QSEAL metadata fields added AFTER signing.
-    All other fields (including retrieved_count initialized to 0) are part of the signed payload.
-    """
+def verify_signature(entry: dict) -> bool:
+    """Verify HMAC signature of an entry."""
     if "qseal_signature" not in entry:
         return False
 
     provided_sig = entry["qseal_signature"]
-
-    # Filter out ONLY the QSEAL metadata fields added after signing:
-    # - qseal_signature (the signature itself)
-    # - qseal_verified (verification flag)
-    # - qseal_meta_hash (duplicate of meta_hash)
-    # - qseal_prev_signature (chain link added by link_signatures() after initial signing)
-    #
-    # NOTE: retrieved_count, drift fields, etc. are part of the signed payload
-    # (initialized before signing, updated after). Changing them breaks the signature.
-    # This is INTENTIONAL - it creates a tamper-evident seal on the original state.
-    excluded_fields = {"qseal_signature", "qseal_verified", "qseal_meta_hash", "qseal_prev_signature"}
+    excluded_fields = {
+        "qseal_signature",
+        "qseal_verified",
+        "qseal_meta_hash",
+        "qseal_prev_signature",
+    }
     filtered = {k: v for k, v in entry.items() if k not in excluded_fields}
-
     expected_sig = generate_signature(filtered)
-
     return hmac.compare_digest(provided_sig, expected_sig)
 
 
+
 def link_signatures(previous_entry: dict, current_entry: dict) -> dict:
-    """
-    Create a chain link between two entries by embedding previous signature hash.
-    """
+    """Attach previous signature hash to current entry for chain integrity."""
     prev_sig = previous_entry.get("qseal_signature", "")
     current_entry["qseal_prev_signature"] = hashlib.sha256(prev_sig.encode()).hexdigest()[:16]
     return current_entry
 
 
-def verify_chain(entries: list) -> bool:
-    """
-    Verify the integrity of a QSEAL signature chain.
-    Ensures genesis entry has no previous link and each subsequent entry
-    correctly references the hash of the previous signature.
-    """
+
+def verify_chain(entries: list[dict]) -> bool:
+    """Verify signature-chain continuity across entries."""
     if not entries:
         return True
-    
-    # Genesis entry should not have a previous link
+
     if entries[0].get("qseal_prev_signature"):
-        print("⚠️ Genesis entry should not have a previous link")
+        logger.warning("Genesis entry should not have a previous link")
         return False
-    
+
     for i in range(1, len(entries)):
         prev = entries[i - 1]
         curr = entries[i]
-        
-        # Each entry after genesis must have a chain link
         if "qseal_prev_signature" not in curr:
-            print(f"⚠️ Entry {i} missing chain link")
+            logger.warning("Entry %s missing chain link", i)
             return False
-        
+
         expected_prev_hash = hashlib.sha256(prev["qseal_signature"].encode()).hexdigest()[:16]
         if curr.get("qseal_prev_signature") != expected_prev_hash:
-            print(f"⚠️ Chain broken between entries {i-1} and {i}")
+            logger.warning("Chain broken between entries %s and %s", i - 1, i)
             return False
-    
+
     return True
 
 
+
 def qseal_status_report(entry: dict) -> dict:
-    """
-    Generate a verification status report for a signed entry.
-    """
+    """Return verification status details for an entry."""
     verified_hash = verify_meta_hash(entry)
     verified_sig = verify_signature(entry)
     return {
@@ -136,15 +113,16 @@ def qseal_status_report(entry: dict) -> dict:
         "verified_meta_hash": verified_hash,
         "verified_signature": verified_sig,
         "chain_linked": "qseal_prev_signature" in entry,
-        "summary": "VALID" if verified_hash and verified_sig else "INVALID"
+        "summary": "VALID" if verified_hash and verified_sig else "INVALID",
     }
+
 
 
 def qseal_info() -> dict:
     """Return QSEAL engine metadata."""
     return {
         "module": "qseal_engine",
-        "version": "1.0.0",
+        "version": "1.1.1",
         "description": "Core cryptographic signing and verification for ClawSeal QSEAL",
         "functions": [
             "generate_signature",
@@ -152,92 +130,61 @@ def qseal_info() -> dict:
             "verify_signature",
             "link_signatures",
             "verify_chain",
-            "qseal_status_report"
-        ]
+            "qseal_status_report",
+        ],
     }
 
 
-def repair_chain(entries: list) -> list:
-    """
-    Repair broken chain links by recomputing previous signature hashes.
-    WARNING: This invalidates cryptographic trust. Use only for recovering
-    from honest structural errors, not tampering.
-    """
+
+def repair_chain(entries: list[dict]) -> list[dict]:
+    """Repair broken chain links. Use only for structural recovery."""
     if not entries:
         return entries
-    
-    # Remove prev link from genesis
+
     if "qseal_prev_signature" in entries[0]:
         del entries[0]["qseal_prev_signature"]
-    
+
     for i in range(1, len(entries)):
         prev_sig = entries[i - 1].get("qseal_signature", "")
         entries[i]["qseal_prev_signature"] = hashlib.sha256(prev_sig.encode()).hexdigest()[:16]
-    
+
     return entries
 
 
-# ==============================================================================
-# DEPRECATED: Legacy QSEALEngine Class (Entry 86 compatibility)
-# ==============================================================================
-# ⚠️  DEPRECATION WARNING ⚠️
-#
-# This class uses INSECURE signing: sha256(payload + secret)
-# This is vulnerable to length extension attacks and lacks proper key derivation.
-#
-# DO NOT USE for new code.
-#
-# For secure QSEAL signatures, use the HMAC-based functions instead:
-#   - sign_entry(entry, agent_id)  → Returns signed entry with HMAC-SHA256
-#   - verify_signature(entry)      → Verifies HMAC signature
-#   - generate_signature(payload)  → Raw HMAC-SHA256 signature
-#
-# This class is retained ONLY for backward compatibility with Entry 86.
-# It will be removed in a future version.
-# ==============================================================================
-
 class QSEALEngine:
-    """
-    DEPRECATED: Minimal QSEAL for Entry 86 compatibility.
+    """DEPRECATED legacy class using insecure sha256(payload + secret)."""
 
-    ⚠️  Uses insecure sha256(payload + secret) signing.
-    ⚠️  DO NOT USE for new code.
-    ⚠️  Use sign_entry() / verify_signature() instead (HMAC-SHA256).
-    """
     def __init__(self):
-        import os
-        import warnings
         warnings.warn(
             "QSEALEngine is DEPRECATED and uses insecure sha256(payload + secret) signing. "
-            "Use sign_entry() and verify_signature() instead for HMAC-SHA256 signatures.",
+            "Use sign_entry() and verify_signature() instead for HMAC-SHA256.",
             DeprecationWarning,
-            stacklevel=2
+            stacklevel=2,
         )
-        self.secret = os.getenv("QSEAL_SECRET")
+        self.secret = get_qseal_secret(require=False)
         if not self.secret:
-            print("⚠️  QSEAL_SECRET not found in environment")
+            warnings.warn(
+                "QSEAL secret not found; deprecated QSEALEngine disabled.",
+                UserWarning,
+                stacklevel=2,
+            )
             self.available = False
         else:
             self.available = True
-            print(f"✅ QSEAL initialized with secret: {self.secret[:8]}...")
 
-    def sign_transition(self, data):
-        """
-        DEPRECATED: Sign a transition with INSECURE sha256(payload + secret).
-        Use sign_entry() instead for HMAC-SHA256.
-        """
+    def sign_transition(self, data: dict):
+        """DEPRECATED insecure signer retained only for compatibility."""
         if not self.available:
             return None
-        import hashlib
-        import json
         payload = json.dumps(data, sort_keys=True)
         return hashlib.sha256((payload + self.secret).encode()).hexdigest()
-    
-    def sign_entry(self, data):
-        """Alias for sign_transition"""
+
+    def sign_entry(self, data: dict):
+        """Alias for sign_transition()."""
         return self.sign_transition(data)
 
 
-def sign_scroll(entry: dict, agent_id: str = None) -> dict:
+
+def sign_scroll(entry: dict, agent_id: str | None = None) -> dict:
     """Backward-compatible alias for sign_entry."""
     return sign_entry(entry, agent_id=agent_id)

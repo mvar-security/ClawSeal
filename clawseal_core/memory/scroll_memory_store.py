@@ -224,19 +224,15 @@ class ScrollMemoryStore:
             "drift_accuracy": None
         }
 
-        # Sign with QSEAL if enabled
+        # Sign with QSEAL (production or demo mode)
         qseal_is_enabled = qseal_enabled()
-        if qseal_is_enabled:
-            signed_scroll = sign_entry(scroll, agent_id=self.agent_id)
+        signed_scroll = sign_entry(scroll, agent_id=self.agent_id)
 
-            # Link to previous scroll
-            if prev_scroll:
-                signed_scroll = link_signatures(prev_scroll, signed_scroll)
+        # Link to previous scroll
+        if prev_scroll:
+            signed_scroll = link_signatures(prev_scroll, signed_scroll)
 
-            scroll = signed_scroll
-        else:
-            # Warning: QSEAL disabled
-            scroll["qseal_warning"] = "QSEAL_SECRET not set - signatures unavailable"
+        scroll = signed_scroll
 
         # Write YAML file
         scroll_path = self.scrolls_dir / f"{scroll_id}.yaml"
@@ -256,6 +252,8 @@ class ScrollMemoryStore:
             "memory_type": memory_type,
             "qseal_signature": scroll.get("qseal_signature", "N/A"),
             "qseal_enabled": qseal_is_enabled,
+            "qseal_mode": scroll.get("qseal_mode", "unknown"),
+            "qseal_production": scroll.get("qseal_production", False),
             "chain_linked": "qseal_prev_signature" in scroll,
             "gist": gist,
             "keywords": keywords

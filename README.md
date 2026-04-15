@@ -239,7 +239,7 @@ Every memory scroll is cryptographically signed using **HMAC-SHA256**:
 
 **QSEAL fixes applied (pre-demo):**
 1. Added `qseal_prev_signature` to excluded_fields in `verify_signature()` (chain linking now works)
-2. Removed silent dev secret fallback → fail-closed error (no weak defaults)
+2. Added persistent demo signing mode (`~/.clawseal/demo_secret`) with explicit artifact markers
 3. Deprecated legacy `sha256(payload+secret)` path → HMAC-SHA256 only
 
 See [clawseal_core/security/qseal_engine.py](clawseal_core/security/qseal_engine.py) for implementation.
@@ -268,7 +268,7 @@ See [clawseal_core/security/qseal_engine.py](clawseal_core/security/qseal_engine
 
 ### Current Limitations
 - **Text-based search only** — No semantic similarity (keyword matching with weighted scoring)
-- **QSEAL_SECRET required for signed mode** — cryptographic operations fail closed when missing
+- **Signed by default:** without `QSEAL_SECRET`, ClawSeal uses local demo signing mode (`qseal_mode: demo_ephemeral`)
 - **No multi-user isolation** — Single-agent memory store (user_id filtering exists but not enforced)
 - **No distributed consensus** — Single-machine only (no blockchain, no federation)
 
@@ -332,7 +332,7 @@ See [clawseal_core/security/qseal_engine.py](clawseal_core/security/qseal_engine
 ChromaDB adds 500+ MB of dependencies, requires complex setup (Docker, etc.), and stores data in opaque binary formats. Scroll-native memory uses human-readable YAML files with text-based search—zero vector database dependencies, Git-friendly, auditable.
 
 ### Is this secure?
-QSEAL signatures provide tamper-evidence via HMAC-SHA256. The security model is **fail-closed** (missing QSEAL_SECRET = hard error). However, QSEAL_SECRET must be kept secure—anyone with the secret can forge signatures. For production use, rotate secrets regularly and store in secure vaults (not shell profiles).
+QSEAL signatures provide tamper-evidence via HMAC-SHA256. If `QSEAL_SECRET` is set, ClawSeal runs in production signing mode. If unset, ClawSeal auto-initializes a local demo secret at `~/.clawseal/demo_secret` and marks artifacts with `qseal_mode: demo_ephemeral` and `qseal_production: false`. For production, set and rotate `QSEAL_SECRET` and store it in a secure vault.
 
 ### How does text search compare to embeddings?
 Text search is simpler, faster, and deterministic—but less semantically sophisticated. For use cases requiring deep semantic similarity (e.g., "find memories about cooking" should match "baking bread"), embeddings are superior. Scroll-native memory prioritizes simplicity and human-readability over semantic depth.
