@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-DEMO LAYER 1: Identity Drift Without MIRRA
-==========================================
+DEMO LAYER 1: Identity Drift Without ClawSeal
+==============================================
 
 Simulates 5 conversation sessions WITHOUT persistent memory.
 Demonstrates 100% identity drift - complete amnesia between sessions.
@@ -47,7 +47,7 @@ def simulate_session_without_memory(session_num: int, user_message: str):
 
 def main():
     print("=" * 80)
-    print("LAYER 1: IDENTITY DRIFT DEMONSTRATION (No MIRRA)")
+    print("LAYER 1: IDENTITY DRIFT DEMONSTRATION (No ClawSeal)")
     print("=" * 80)
     print()
     print("Simulating 5 conversation sessions without persistent memory...")
