@@ -23,7 +23,7 @@ Three components:
 pip install clawseal
 export QSEAL_SECRET="$(openssl rand -hex 32)"
 python3 -c "from clawseal import ScrollMemoryStore; print('ClawSeal import OK')"
-clawseal verify
+clawseal-doctor
 ```
 
 For the full reproducible 3-layer evidence demo, use the repository workflow below.
