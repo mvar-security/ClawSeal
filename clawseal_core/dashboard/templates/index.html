@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClawSeal — Cryptographic Memory Verification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Monaco', 'Courier New', monospace;
+            background: #0a0e14;
+            color: #b3b1ad;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .container {
+            display: grid;
+            grid-template-rows: auto 1fr;
+            height: 100vh;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #1a1f2e 0%, #0f1419 100%);
+            padding: 24px 32px;
+            border-radius: 12px;
+            border: 1px solid #2a3441;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #39ff14;
+            text-shadow: 0 0 20px rgba(57, 255, 20, 0.3);
+            letter-spacing: 2px;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            background: rgba(57, 255, 20, 0.1);
+            border: 2px solid #39ff14;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #39ff14;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: #39ff14;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        /* Main Content Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            height: 100%;
+        }
+
+        /* Panel Base */
+        .panel {
+            background: linear-gradient(135deg, #1a1f2e 0%, #0f1419 100%);
+            border-radius: 12px;
+            border: 1px solid #2a3441;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #2a3441;
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .panel-subtitle {
+            font-size: 12px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Layer 1: Drift Graph */
+        .panel.layer1 {
+            --accent-color: #ff6b6b;
+        }
+
+        .drift-container {
+            flex: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .drift-value {
+            font-size: 96px;
+            font-weight: 700;
+            text-align: center;
+            color: #ff6b6b;
+            text-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+            margin-bottom: 20px;
+            font-family: 'Monaco', monospace;
+            transition: color 0.5s ease, text-shadow 0.5s ease;
+        }
+
+        .drift-value.zero-drift {
+            color: #39ff14;
+            text-shadow: 0 0 30px rgba(57, 255, 20, 0.5);
+        }
+
+        .drift-label {
+            text-align: center;
+            font-size: 16px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+
+        .drift-graph {
+            height: 120px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #2a3441;
+        }
+
+        .drift-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(180deg, #ff6b6b 0%, #d63447 100%);
+            transition: height 0.3s ease, background 0.5s ease;
+            height: 100%;
+        }
+
+        .drift-bar.zero-drift {
+            background: linear-gradient(180deg, #39ff14 0%, #2dc90f 100%);
+        }
+
+        .baseline-label {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 107, 107, 0.2);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #ff6b6b;
+            font-weight: 600;
+            transition: all 0.5s ease;
+        }
+
+        .baseline-label.protected {
+            background: rgba(57, 255, 20, 0.2);
+            color: #39ff14;
+        }
+
+        /* Layer 2: Scroll Creation */
+        .panel.layer2 {
+            --accent-color: #4ecdc4;
+        }
+
+        .scroll-feed {
+            flex: 1;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #2a3441;
+        }
+
+        .scroll-entry {
+            margin-bottom: 16px;
+            padding: 16px;
+            background: rgba(78, 205, 196, 0.05);
+            border-left: 3px solid #4ecdc4;
+            border-radius: 4px;
+            font-size: 13px;
+            line-height: 1.6;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .scroll-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            color: #4ecdc4;
+            font-size: 11px;
+        }
+
+        .scroll-content {
+            color: #b3b1ad;
+            margin-bottom: 10px;
+            font-family: 'Monaco', monospace;
+        }
+
+        .qseal-signature {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            color: #39ff14;
+            font-family: 'Monaco', monospace;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .qseal-label {
+            color: #6b7280;
+            font-size: 9px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Layer 3: Chain Verification */
+        .panel.layer3 {
+            --accent-color: #39ff14;
+        }
+
+        .verification-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .verification-status {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 6px solid #39ff14;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            position: relative;
+            background: radial-gradient(circle, rgba(57, 255, 20, 0.1) 0%, transparent 70%);
+            animation: rotateGlow 3s linear infinite;
+        }
+
+        @keyframes rotateGlow {
+            0% { box-shadow: 0 0 20px rgba(57, 255, 20, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(57, 255, 20, 0.6); }
+            100% { box-shadow: 0 0 20px rgba(57, 255, 20, 0.3); }
+        }
+
+        .checkmark {
+            font-size: 120px;
+            color: #39ff14;
+            text-shadow: 0 0 30px rgba(57, 255, 20, 0.8);
+        }
+
+        .verification-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #39ff14;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        .verification-details {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 8px;
+            width: 100%;
+            border: 1px solid #2a3441;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #2a3441;
+            font-size: 13px;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #6b7280;
+        }
+
+        .detail-value {
+            color: #39ff14;
+            font-weight: 600;
+        }
+
+        /* Scrollbar Styling */
+        .scroll-feed::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .scroll-feed::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+        }
+
+        .scroll-feed::-webkit-scrollbar-thumb {
+            background: #4ecdc4;
+            border-radius: 4px;
+        }
+
+        .scroll-feed::-webkit-scrollbar-thumb:hover {
+            background: #45b8af;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>CLAWSEAL</h1>
+                <div class="status-badge">
+                    <div class="status-dot"></div>
+                    <span id="statusText">CONNECTING</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-grid">
+            <!-- Layer 1: Baseline Drift -->
+            <div class="panel layer1">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">Layer 1</div>
+                        <div class="panel-subtitle">Baseline Drift</div>
+                    </div>
+                </div>
+                <div class="drift-container">
+                    <div class="drift-value" id="driftValue">100%</div>
+                    <div class="drift-label">Memory Drift Rate</div>
+                    <div class="drift-graph">
+                        <div class="drift-bar" id="driftBar"></div>
+                        <div class="baseline-label" id="baselineLabel">NO PROTECTION</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layer 2: Scroll Creation -->
+            <div class="panel layer2">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">Layer 2</div>
+                        <div class="panel-subtitle">ClawSeal Active</div>
+                    </div>
+                </div>
+                <div class="scroll-feed" id="scrollFeed">
+                    <!-- Scrolls will be added here dynamically -->
+                </div>
+            </div>
+
+            <!-- Layer 3: Chain Verification -->
+            <div class="panel layer3">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">Layer 3</div>
+                        <div class="panel-subtitle">Chain Integrity</div>
+                    </div>
+                </div>
+                <div class="verification-content">
+                    <div class="verification-status">
+                        <div class="checkmark">✓</div>
+                    </div>
+                    <div class="verification-text">Chain Verified</div>
+                    <div class="verification-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Scrolls Verified:</span>
+                            <span class="detail-value" id="scrollsVerified">0/0</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Signatures Valid:</span>
+                            <span class="detail-value" id="signaturesValid">0%</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Chain Links:</span>
+                            <span class="detail-value" id="chainLinks">0 Links</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Tampering Detected:</span>
+                            <span class="detail-value" id="tamperingDetected">None</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">QSEAL Engine:</span>
+                            <span class="detail-value" id="qsealEngine">HMAC-SHA256</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // WebSocket connection
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const ws = new WebSocket(`${protocol}//${window.location.host}/ws/demo`);
+
+        ws.onopen = () => {
+            console.log('WebSocket connected');
+            document.getElementById('statusText').textContent = 'LIVE';
+        };
+
+        ws.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            console.log('Received:', message);
+
+            switch (message.type) {
+                case 'init':
+                    // Initial state loaded
+                    break;
+
+                case 'drift_update':
+                    updateDrift(message.data.drift_percentage);
+                    break;
+
+                case 'scroll_created':
+                    addScroll(message.data);
+                    break;
+
+                case 'verification_complete':
+                    updateVerification(message.data);
+                    break;
+
+                case 'error':
+                    console.error('Error:', message.data.message);
+                    break;
+            }
+        };
+
+        ws.onerror = (error) => {
+            console.error('WebSocket error:', error);
+            document.getElementById('statusText').textContent = 'ERROR';
+        };
+
+        ws.onclose = () => {
+            console.log('WebSocket closed');
+            document.getElementById('statusText').textContent = 'DISCONNECTED';
+        };
+
+        function updateDrift(percentage) {
+            const driftValue = document.getElementById('driftValue');
+            const driftBar = document.getElementById('driftBar');
+            const baselineLabel = document.getElementById('baselineLabel');
+
+            driftValue.textContent = percentage + '%';
+            driftBar.style.height = percentage + '%';
+
+            if (percentage === 0) {
+                driftValue.classList.add('zero-drift');
+                driftBar.classList.add('zero-drift');
+                baselineLabel.textContent = 'PROTECTED';
+                baselineLabel.classList.add('protected');
+                document.getElementById('statusText').textContent = 'VERIFIED';
+            }
+        }
+
+        function addScroll(scroll) {
+            const scrollFeed = document.getElementById('scrollFeed');
+
+            const entry = document.createElement('div');
+            entry.className = 'scroll-entry';
+
+            const timestamp = new Date(scroll.timestamp).toLocaleString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+
+            entry.innerHTML = `
+                <div class="scroll-meta">
+                    <span>${scroll.scroll_id}.yaml</span>
+                    <span>${timestamp}</span>
+                </div>
+                <div class="scroll-content">
+                    content: "${scroll.content}"
+                </div>
+                <div class="qseal-label">QSEAL Signature:</div>
+                <div class="qseal-signature">${scroll.qseal_signature}</div>
+            `;
+
+            scrollFeed.appendChild(entry);
+            scrollFeed.scrollTop = scrollFeed.scrollHeight;
+        }
+
+        function updateVerification(verification) {
+            document.getElementById('scrollsVerified').textContent =
+                `${verification.scrolls_verified}/${verification.total_scrolls}`;
+            document.getElementById('signaturesValid').textContent =
+                `${verification.signatures_valid}%`;
+            document.getElementById('chainLinks').textContent =
+                `${verification.chain_links} Links`;
+            document.getElementById('tamperingDetected').textContent =
+                verification.tampering_detected ? 'DETECTED' : 'None';
+            document.getElementById('qsealEngine').textContent =
+                verification.qseal_engine;
+        }
+    </script>
+</body>
+</html>

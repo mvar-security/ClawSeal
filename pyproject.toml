@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "clawseal"
-version = "1.1.3"
+version = "1.1.5"
 description = "Cryptographically-verified memory for AI agents with QSEAL tamper-evidence"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -43,6 +43,8 @@ classifiers = [
 ]
 dependencies = [
     "PyYAML>=6.0",
+    "Flask>=3.0",
+    "flask-sock>=0.7.0",
 ]
 
 [project.optional-dependencies]
@@ -61,15 +63,21 @@ Issues = "https://github.com/mvar-security/ClawSeal/issues"
 Changelog = "https://github.com/mvar-security/ClawSeal/blob/main/CHANGELOG.md"
 
 [project.scripts]
-clawseal = "clawseal.cli:main"
+clawseal-quickstart = "clawseal.cli.quickstart:main"
+clawseal-doctor = "clawseal.cli.doctor:main"
 
 [tool.setuptools]
-packages = ["clawseal", "clawseal.memory", "clawseal.security"]
+packages = ["clawseal", "clawseal.memory", "clawseal.security", "clawseal.cli", "clawseal.dashboard"]
 
 [tool.setuptools.package-dir]
 "clawseal" = "clawseal_core"
 "clawseal.memory" = "clawseal_core/memory"
 "clawseal.security" = "clawseal_core/security"
+"clawseal.cli" = "clawseal_core/cli"
+"clawseal.dashboard" = "clawseal_core/dashboard"
+
+[tool.setuptools.package-data]
+"clawseal.dashboard" = ["templates/*.html"]
 
 [tool.black]
 line-length = 100

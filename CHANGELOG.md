@@ -7,6 +7,84 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.5] - 2026-04-16
+
+### Fixed
+
+- **Critical:** Fixed `ModuleNotFoundError: No module named 'clawseal_core'` in dashboard when installed from PyPI
+  - Dashboard `app.py` was importing from source directory name (`clawseal_core`) instead of installed package name (`clawseal`)
+  - Changed import to: `from clawseal.memory.scroll_memory_store import ScrollMemoryStore`
+  - Dashboard now works correctly in both dev and PyPI-installed environments
+  - Bug affected all users installing from PyPI who ran `clawseal-quickstart`
+
+### Notes
+
+- **Hotfix release** — No new features, only fixes packaging bug introduced in 1.1.4
+- If you installed 1.1.4 and experienced the import error, upgrade to 1.1.5: `pip install --upgrade clawseal`
+
+---
+
+## [1.1.4] - 2026-04-15
+
+### Added
+
+#### CLI Commands
+
+- **`clawseal-quickstart`** — One-command interactive demo with live visualization
+  - Starts Flask dashboard server on port 8080
+  - Auto-opens browser to dashboard interface
+  - Runs Layer 1/2/3 demos with real-time WebSocket updates
+  - Auto-generates QSEAL_SECRET in demo mode (with production warning)
+  - Zero configuration required for first-time users
+
+- **`clawseal-doctor`** — Health check diagnostics following Microsoft AGT pattern
+  - 8 diagnostic checks: Python version, ClawSeal core, PyYAML, Flask, Flask-Sock, QSEAL mode, OpenSSL, dashboard server
+  - Color-coded status indicators: ✅ passed, ⚠️ warnings, ❌ failed
+  - Production-ready environment validation
+  - Exit codes for CI/CD integration
+
+#### Dashboard System
+
+- **Live Flask + WebSocket Dashboard** — Real-time demo visualization
+  - Dark terminal aesthetic optimized for 1080p screen recording
+  - Three-panel layout: Layer 1 (drift), Layer 2 (scrolls), Layer 3 (verification)
+  - WebSocket streaming for real-time updates (no polling)
+  - Layer 1: Drift animates from 100% (red "NO PROTECTION") → 0% (green "PROTECTED") over 3 seconds
+  - Layer 2: Scroll creation feed with QSEAL signatures appearing one-by-one
+  - Layer 3: Chain verification status with circular progress indicator
+  - Health check endpoint: `GET /health`
+
+- **Dashboard UI Components**
+  - Neon green "CLAWSEAL" header with pulsing "VERIFIED" badge
+  - Color scheme: #0a0e14 background, #ff6b6b → #39ff14 drift gradient, #4ecdc4 scroll accent
+  - Real-time connection status: "CONNECTING" → "LIVE"
+  - Auto-generated demo scrolls at runtime (no hardcoded data)
+
+### Dependencies
+
+- Added `Flask >= 3.0` — Web framework for dashboard server
+- Added `flask-sock >= 0.7.0` — WebSocket support for real-time updates
+
+### Changed
+
+- Dashboard demo data now generated at runtime instead of hardcoded fixtures
+- QSEAL_SECRET auto-generation includes production security warning
+- Package size optimized to 33KB wheel (lean distribution)
+
+### Documentation
+
+- Added inline documentation for dashboard WebSocket protocol
+- CLI commands include built-in help text and usage examples
+
+### Notes
+
+- **No breaking changes** from 1.1.3
+- Backward compatible with existing ScrollMemoryStore API
+- Demo mode is non-persistent (generates fresh data on each run)
+- Production mode requires explicit `QSEAL_SECRET` environment variable
+
+---
+
 ## [1.1.1] - 2026-04-15
 
 ### Changed
