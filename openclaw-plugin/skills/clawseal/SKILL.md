@@ -16,7 +16,7 @@ metadata:
         label: "Install ClawSeal cryptographic memory system"
       - id: server
         kind: shell
-        command: "clawseal verify"
+        command: "clawseal-doctor"
         label: "Verify ClawSeal installation"
 ---
 
@@ -168,7 +168,7 @@ openclaw plugins install clawseal
 pip install clawseal
 
 # Verify installation
-clawseal verify
+clawseal-doctor
 
 # Start server (auto-starts on port 5002)
 python3 -m clawseal_openclaw.server

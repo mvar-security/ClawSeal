@@ -23,9 +23,9 @@ python3 -c "from clawseal import ScrollMemoryStore; print('✅ ClawSeal import O
     exit 1
 }
 
-# Run clawseal verify
+# Run clawseal-doctor
 echo "🔍 Running ClawSeal verification..."
-clawseal verify || echo "⚠️  Verification warnings (non-fatal)"
+clawseal-doctor || echo "⚠️  Verification warnings (non-fatal)"
 
 # Create scrolls directory
 mkdir -p clawseal_scrolls

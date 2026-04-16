@@ -79,7 +79,7 @@ ClawSeal 1.1.3
 ## Verification Check 3: System Verification
 
 ```bash
-clawseal verify
+clawseal-doctor
 ```
 
 **Output**:
