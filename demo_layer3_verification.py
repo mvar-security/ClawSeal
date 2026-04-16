@@ -19,11 +19,10 @@ import sys
 import yaml
 from pathlib import Path
 
-# Add project root to path
-PROJECT_ROOT = Path(__file__).parent
-sys.path.insert(0, str(PROJECT_ROOT))
+# Import from installed package (works in both dev and PyPI installs)
+from clawseal.security.qseal_engine import verify_signature
 
-from clawseal_core.security.qseal_engine import verify_signature
+PROJECT_ROOT = Path(__file__).parent
 
 def print_section(title: str):
     """Print a formatted section header."""
