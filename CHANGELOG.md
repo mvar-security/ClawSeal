@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.6] - 2026-04-22
+
+### Added
+
+- **Unified `clawseal` CLI entry point** with subcommand dispatcher
+  - `clawseal --version` — Print package version
+  - `clawseal --help` — Show help message
+  - `clawseal doctor` — Run health check diagnostics
+  - `clawseal quickstart` — Run interactive setup wizard
+
+### Changed
+
+- **Backward compatibility preserved** — Original commands still work:
+  - `clawseal-doctor` remains available as direct alias
+  - `clawseal-quickstart` remains available as direct alias
+  - Existing scripts and workflows continue to work unchanged
+
+---
+
 ## [1.1.5] - 2026-04-16
 
 ### Fixed

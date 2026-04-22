@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "clawseal"
-version = "1.1.5"
+version = "1.1.6"
 description = "Cryptographically-verified memory for AI agents with QSEAL tamper-evidence"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -63,6 +63,7 @@ Issues = "https://github.com/mvar-security/ClawSeal/issues"
 Changelog = "https://github.com/mvar-security/ClawSeal/blob/main/CHANGELOG.md"
 
 [project.scripts]
+clawseal = "clawseal.cli.main:main"
 clawseal-quickstart = "clawseal.cli.quickstart:main"
 clawseal-doctor = "clawseal.cli.doctor:main"
 
