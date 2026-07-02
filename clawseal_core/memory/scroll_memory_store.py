@@ -176,7 +176,7 @@ class ScrollMemoryStore:
             content: The content to remember
             memory_type: fact | preference | insight | decision | general
             user_id: User ID for memory attribution
-            emotional_state: PAD state at memory creation
+            emotional_state: optional generic affect/context dict at memory creation
             blessing: Optional blessing (auto-generated if None)
 
         Returns:
