@@ -68,6 +68,20 @@ def get_qseal_context(require: bool = True) -> dict[str, Any]:
             "qseal_secret_source": "QSEAL_SECRET",
         }
 
+    # FAIL-CLOSED opt-in (Phase 4B / finding G-19). By default ClawSeal falls back to an
+    # ephemeral demo secret when QSEAL_SECRET is unset (convenient for local demos). In
+    # production you can require a real secret: with CLAWSEAL_REQUIRE_PRODUCTION=1 set, a
+    # missing QSEAL_SECRET raises instead of silently demo-signing — so signatures are
+    # never mistaken for production trust. This makes the "fail-closed / no weak defaults"
+    # posture real when opted in (previously claimed unconditionally, which was false).
+    _require_prod = os.getenv("CLAWSEAL_REQUIRE_PRODUCTION", "").strip().lower() in {"1", "true", "yes"}
+    if _require_prod:
+        raise RuntimeError(
+            "CLAWSEAL_REQUIRE_PRODUCTION is set but QSEAL_SECRET is not. Refusing to fall "
+            "back to an ephemeral demo secret (fail-closed). Set QSEAL_SECRET to a 256-bit "
+            "value (e.g. `openssl rand -hex 32`)."
+        )
+
     if not require:
         return {
             "secret": None,

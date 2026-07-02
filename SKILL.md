@@ -1,7 +1,7 @@
 ---
 name: clawseal
 description: Cryptographically-verified memory for AI agents with QSEAL tamper-evidence
-version: 1.0.0
+version: 1.1.6
 author: Shawn Cohen
 repository: https://github.com/clawzero/clawseal
 license: Apache-2.0

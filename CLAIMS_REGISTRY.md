@@ -1,6 +1,6 @@
 # ClawSeal — Claims Registry
 
-**Version:** 1.0.0
+**Version:** 1.1.6
 **Date:** April 14, 2026
 **Status:** Production
 **Author:** Shawn Cohen
@@ -80,7 +80,7 @@ This registry maps every claim made in public-facing documentation to specific p
 | Claim | Proof Artifact | Test Name | Repro Command |
 |-------|---------------|-----------|---------------|
 | **Fix One: qseal_prev_signature exclusion added** | [mirra_core/security/qseal_engine.py](mirra_core/security/qseal_engine.py) line 76 | excluded_fields set | `grep "excluded_fields = " mirra_core/security/qseal_engine.py` |
-| **Fix Two: Silent dev secret fallback removed** | [mirra_core/security/qseal_utils.py](mirra_core/security/qseal_utils.py) lines 11-18 | Fail-closed error | `python3 -c "import os; os.environ.pop('QSEAL_SECRET', None); import mirra_core.security.qseal_utils" 2>&1 \| grep "RuntimeError"` |
+| **Fix Two: Opt-in fail-closed (no silent production trust)** | [clawseal_core/security/qseal_utils.py](clawseal_core/security/qseal_utils.py) `get_qseal_context` | `test_require_production_raises_without_secret` | `CLAWSEAL_REQUIRE_PRODUCTION=1 python3 -c "import os; os.environ.pop('QSEAL_SECRET',None); from clawseal_core.security.qseal_utils import get_qseal_context; get_qseal_context()" 2>&1 \| grep RuntimeError` |
 | **Fix Three: Legacy signing deprecated** | [mirra_core/security/qseal_engine.py](mirra_core/security/qseal_engine.py) lines 176-193 | DeprecationWarning | `grep -A 18 "DEPRECATED:" mirra_core/security/qseal_engine.py \| head -20` |
 
 ---
@@ -89,7 +89,7 @@ This registry maps every claim made in public-facing documentation to specific p
 
 **All proof artifacts captured on:** April 14, 2026
 **QSEAL_SECRET used:** `test_secret_key_for_demo` (32 characters)
-**Demo version:** 1.0.0
+**Demo version:** 1.1.6
 **SIP specification:** SIP-0006 (Scroll-Native Memory Architecture)
 
 **Ground truth directory:** [demo/expected_outputs/](demo/expected_outputs/)

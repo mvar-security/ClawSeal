@@ -2,7 +2,7 @@
 
 **ClawSeal — Scroll-Native Memory Architecture**
 
-**Version:** 1.0.0
+**Version:** 1.1.6
 **Date:** April 14, 2026
 **Author:** Shawn Cohen
 
@@ -10,7 +10,7 @@
 
 ## Overview
 
-This document analyzes the security properties and attack surface of ClawSeal v1.0.0. It is based directly on the security analysis in [docs/OPEN_CORE_BOUNDARY.md](docs/OPEN_CORE_BOUNDARY.md) and reflects the current public release scope.
+This document analyzes the security properties and attack surface of ClawSeal v1.1.6. It is based directly on the security analysis in [docs/OPEN_CORE_BOUNDARY.md](docs/OPEN_CORE_BOUNDARY.md) and reflects the current public release scope.
 
 **Key principle:** MIRRA provides **tamper-evidence**, not **confidentiality**. The security model assumes attackers do NOT have your `QSEAL_SECRET`.
 
