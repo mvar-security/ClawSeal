@@ -31,6 +31,25 @@ class TestClawSealContractConformance(unittest.TestCase):
         self.assertTrue(s.qseal_signature)
         self.assertEqual(s.subject_id, "jack")
 
+    def test_recall_without_query_returns_subject_history(self):
+        store = self._store()
+        store.remember("agentX", "jack", "Jack prefers concise answers")
+        store.remember("agentX", "jack", "Jack is learning piano")
+        store.remember("agentX", "jill", "Jill asked about pricing")
+
+        jack = store.recall("agentX", "jack")
+        self.assertEqual(len(jack), 2)
+        self.assertTrue(all(s.subject_id == "jack" for s in jack))
+        jill = store.recall("agentX", "jill")
+        self.assertEqual(len(jill), 1)
+
+    def test_recall_without_query_drops_tampered(self):
+        store = self._store()
+        store.remember("agentX", "jack", "the real history")
+        for f in store._store.scrolls_dir.glob("*.yaml"):
+            f.write_text(f.read_text().replace("the real history", "a forged history"))
+        self.assertEqual(store.recall("agentX", "jack"), [])
+
     def test_verify_genuine_true_tampered_false(self):
         store = self._store()
         s = store.remember("agentX", "jack", "the original memory")

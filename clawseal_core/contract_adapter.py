@@ -53,8 +53,13 @@ class ClawSealMemoryStore:
     def recall(self, agent_id: str, subject_id: str, query: Optional[str] = None) -> List["Scroll"]:
         # recall() in the store verifies on read and drops tampered scrolls. It returns a
         # dict wrapper {success, count, memories, ...}; the verified scrolls are in "memories".
-        recall_result = self._store.recall(query=query or "", user_id=subject_id)
-        memories = recall_result.get("memories", []) if isinstance(recall_result, dict) else recall_result
+        # Contract semantics: no query = the subject's full verified history (the store's
+        # native recall is relevance-ranked and returns nothing for an empty query).
+        if query:
+            recall_result = self._store.recall(query=query, user_id=subject_id)
+            memories = recall_result.get("memories", []) if isinstance(recall_result, dict) else recall_result
+        else:
+            memories = self._list_verified(subject_id)
         results: List[Any] = []
         for m in memories:
             if not _CONTRACT:
@@ -71,6 +76,26 @@ class ClawSealMemoryStore:
                 )
             )
         return results
+
+    def _list_verified(self, subject_id: str) -> List[dict]:
+        """Every scroll for this subject whose signature verifies, oldest first.
+
+        Same mandatory verify-on-read as the store's recall(): unverified or
+        tampered scrolls are dropped, never returned.
+        """
+        import yaml
+
+        verified: List[dict] = []
+        for scroll_file in sorted(self._store.scrolls_dir.glob("*.yaml")):
+            with open(scroll_file, "r") as f:
+                data = yaml.safe_load(f)
+            if not isinstance(data, dict) or data.get("user_id") != subject_id:
+                continue
+            if not _qe.verify_signature(data):
+                continue
+            verified.append(data)
+        verified.sort(key=lambda d: str(d.get("timestamp", "")))
+        return verified
 
     def verify(self, scroll: "Scroll") -> "VerificationResult":
         """Real HMAC verification against the ACTUAL stored signed scroll.
