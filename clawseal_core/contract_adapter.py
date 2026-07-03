@@ -22,8 +22,11 @@ except Exception:
     SignatureScheme = None  # type: ignore
     _CONTRACT = False
 
-from clawseal_core.memory.scroll_memory_store import ScrollMemoryStore
-from clawseal_core.security import qseal_engine as _qe
+# Relative imports so this module works under BOTH package names: the repo
+# checkout exposes it as `clawseal_core.contract_adapter`, while the built wheel
+# remaps the same tree to `clawseal.contract_adapter` (see [tool.setuptools.package-dir]).
+from .memory.scroll_memory_store import ScrollMemoryStore
+from .security import qseal_engine as _qe
 
 
 class ClawSealMemoryStore:
