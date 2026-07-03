@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.7] - 2026-07-03
+
+### Added
+- Contract conformance adapter (`MemoryStore`: `remember`/`recall`/`verify`) for the
+  frozen MIRRA core contract v1; no-query `recall` returns the subject's verified history
+- Fail-closed production mode (`CLAWSEAL_REQUIRE_PRODUCTION=1`) and real crypto test suite
+
+### Fixed
+- Contract adapter now importable under both package names (`clawseal` wheel install
+  and `clawseal_core` checkout) — required for `pip install`-only consumers
+
 ## [1.1.6] - 2026-04-22
 
 ### Added
