@@ -131,6 +131,13 @@ def inject_derived_fields(entry: dict, agent_id: str | None = None) -> dict:
     """Enrich entries with timestamp/hash and QSEAL mode markers."""
     enriched = entry.copy()
     ctx = get_qseal_context(require=True)
+    # `timestamp` is injected BEFORE signing and is therefore INSIDE the signed
+    # payload by design — it is deliberately signed here. This differs from the
+    # bridge/on-device engines (mirra_core/identity/fingerprint.py,
+    # mirra_device/qseal_lite.py), which EXCLUDE the timestamp from their signed
+    # fields. Do NOT "harmonize" the two: do not add `timestamp` to
+    # prepare_for_signature()'s filter below as a consistency fix — that would
+    # remove tamper-evidence from the timestamp in ClawSeal.
     enriched["timestamp"] = datetime.now(timezone.utc).isoformat()
     enriched["meta_hash"] = compute_meta_hash(entry, secret=ctx["secret"])
     if agent_id:
@@ -144,7 +151,14 @@ def inject_derived_fields(entry: dict, agent_id: str | None = None) -> dict:
 
 
 def prepare_for_signature(entry: dict) -> str:
-    """Prepare canonical JSON string for signing."""
+    """Prepare canonical JSON string for signing.
+
+    Only `qseal_signature` is excluded (a field can't sign itself). Every other
+    field — including `timestamp` (injected by inject_derived_fields above) —
+    is INSIDE the signed payload by design and stays tamper-evident. Do not add
+    `timestamp` here to match the bridge/qseal_lite exclusion; ClawSeal
+    deliberately signs it.
+    """
     filtered = {k: v for k, v in entry.items() if k != "qseal_signature"}
     canonical_json = json.dumps(filtered, sort_keys=True, ensure_ascii=False)
     return canonical_json
