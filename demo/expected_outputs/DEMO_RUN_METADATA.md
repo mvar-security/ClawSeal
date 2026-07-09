@@ -65,15 +65,15 @@ Three critical security fixes were applied before this demo run:
 
 1. **Fix One:** Added `qseal_prev_signature` to `excluded_fields` in `verify_signature()`
    - Impact: Chain-linked scrolls now verify correctly
-   - File: `mirra_core/security/qseal_engine.py:76`
+   - File: `clawseal_core/security/qseal_engine.py:62`
 
 2. **Fix Two:** Removed silent dev secret fallback → fail-closed error
    - Impact: QSEAL_SECRET now required (no weak defaults)
-   - File: `mirra_core/security/qseal_utils.py:12-18`
+   - File: `clawseal_core/security/qseal_utils.py:55-81`
 
 3. **Fix Three:** Added deprecation warning to legacy `QSEALEngine` class
    - Impact: Insecure sha256(payload+secret) path clearly marked deprecated
-   - File: `mirra_core/security/qseal_engine.py:176-193`
+   - File: `clawseal_core/security/qseal_engine.py:155-176`
 
 ---
 
