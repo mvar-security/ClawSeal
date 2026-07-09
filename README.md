@@ -1,6 +1,6 @@
 # ClawSeal
 
-**Stateless LLMs become stateful agents with tamper-evident memory, zero database dependencies.**
+**Persistent, tamper-evident memory for stateless LLM applications — using human-readable YAML, weighted text recall, and HMAC-SHA256 signatures.**
 
 ---
 
@@ -10,10 +10,10 @@ A cryptographically-verifiable memory system that gives AI agents persistent ide
 
 Three components:
 1. **Scroll-native YAML storage** — Human-readable memory files with QSEAL signatures
-2. **Text-based semantic search** — Keyword matching with weighted scoring (no embeddings)
+2. **Weighted text recall** — Keyword matching with weighted scoring (no embeddings, no semantic model)
 3. **HMAC-SHA256 tamper-evidence** — Every memory cryptographically signed and chain-linked
 
-**Result:** AI agents that remember you, maintain consistent identity, and provide cryptographic proof of memory integrity.
+**Result:** AI agents that remember you, maintain consistent identity, and provide cryptographic verification of memory integrity.
 
 ---
 
@@ -67,13 +67,13 @@ pip install clawzero
 
 ## Claims and Evidence
 
-| Claim | Proof Artifact | Repro Command |
+| Claim | Evidence Artifact | Repro Command |
 |-------|---------------|---------------|
-| **AI agents without ClawSeal drift 100%** (complete amnesia between sessions) | [layer1_baseline_output.txt](demo/expected_outputs/layer1_baseline_output.txt) lines 11-55 | `python3 demo_layer1_baseline.py` |
-| **ClawSeal maintains 0% drift** (perfect memory continuity with QSEAL verification) | [layer2_with_mirra_output.txt](demo/expected_outputs/layer2_with_mirra_output.txt) lines 11-77 | `QSEAL_SECRET=test_secret_key_for_demo python3 demo_layer2_with_clawseal.py` |
-| **QSEAL signatures provide cryptographic proof** (HMAC-SHA256, chain linking, tampering detection) | [layer3_verification_output.txt](demo/expected_outputs/layer3_verification_output.txt) lines 1-115 | `QSEAL_SECRET=test_secret_key_for_demo python3 demo_layer3_verification.py` |
+| **Baseline sessions cannot recover prior stored facts across runs** (no persistence between sessions) | [layer1_baseline_output.txt](demo/expected_outputs/layer1_baseline_output.txt) lines 11-55 | `python3 demo_layer1_baseline.py` |
+| **ClawSeal preserves signed memory continuity across sessions** (prior facts recalled and QSEAL-verified) | [layer2_with_mirra_output.txt](demo/expected_outputs/layer2_with_mirra_output.txt) lines 11-77 | `QSEAL_SECRET=test_secret_key_for_demo python3 demo_layer2_with_clawseal.py` |
+| **QSEAL signatures provide cryptographic tamper-evidence** (HMAC-SHA256, chain linking, tampering detection) | [layer3_verification_output.txt](demo/expected_outputs/layer3_verification_output.txt) lines 1-115 | `QSEAL_SECRET=test_secret_key_for_demo python3 demo_layer3_verification.py` |
 
-All proof artifacts dated **April 14, 2026** and captured from live demo runs. See [DEMO_RUN_METADATA.md](demo/expected_outputs/DEMO_RUN_METADATA.md) for complete verification details.
+All evidence artifacts dated **April 14, 2026** and captured from live demo runs. See [DEMO_RUN_METADATA.md](demo/expected_outputs/DEMO_RUN_METADATA.md) for complete verification details.
 
 ---
 
@@ -81,7 +81,7 @@ All proof artifacts dated **April 14, 2026** and captured from live demo runs. S
 
 ### Layer 1: Identity Drift (Without ClawSeal)
 
-**What it proves:** Baseline AI agents have 100% identity drift across sessions—complete amnesia.
+**What it demonstrates:** Baseline sessions cannot recover prior stored facts across runs—no persistence between sessions.
 
 ```bash
 python3 demo_layer1_baseline.py
@@ -101,13 +101,13 @@ Drift Events: 4/4 (every single transition)
 Memory Persistence: 0% (complete amnesia)
 ```
 
-**Proof artifact:** [demo/expected_outputs/layer1_baseline_output.txt](demo/expected_outputs/layer1_baseline_output.txt)
+**Evidence artifact:** [demo/expected_outputs/layer1_baseline_output.txt](demo/expected_outputs/layer1_baseline_output.txt)
 
 ---
 
 ### Layer 2: Identity Continuity (With ClawSeal)
 
-**What it proves:** ClawSeal maintains 0% drift with Scroll-native memory and QSEAL cryptographic verification.
+**What it demonstrates:** ClawSeal preserves signed memory continuity across sessions with Scroll-native memory and QSEAL cryptographic verification.
 
 ```bash
 export QSEAL_SECRET=test_secret_key_for_demo
@@ -144,15 +144,15 @@ Session 5: Full recall...
   Memory Persistence: 100% (perfect recall)
 ```
 
-**Proof artifact:** [demo/expected_outputs/layer2_with_mirra_output.txt](demo/expected_outputs/layer2_with_mirra_output.txt)
+**Evidence artifact:** [demo/expected_outputs/layer2_with_mirra_output.txt](demo/expected_outputs/layer2_with_mirra_output.txt)
 
 Legacy compatibility note: the historical script name `demo_layer2_with_mirra.py` is still present, and `demo_layer2_with_clawseal.py` is the ClawSeal alias.
 
 ---
 
-### Layer 3: Cryptographic Verification (QSEAL Proof)
+### Layer 3: Cryptographic Verification (QSEAL)
 
-**What it proves:** QSEAL signatures are cryptographically valid (HMAC-SHA256), chain-linked, and tamper-evident.
+**What it demonstrates:** QSEAL signatures are cryptographically valid (HMAC-SHA256), chain-linked, and tamper-evident.
 
 ```bash
 export QSEAL_SECRET=test_secret_key_for_demo
@@ -206,7 +206,7 @@ Verification result:
    This scroll would be REJECTED during recall
 ```
 
-**Proof artifact:** [demo/expected_outputs/layer3_verification_output.txt](demo/expected_outputs/layer3_verification_output.txt)
+**Evidence artifact:** [demo/expected_outputs/layer3_verification_output.txt](demo/expected_outputs/layer3_verification_output.txt)
 
 ---
 
@@ -291,7 +291,7 @@ ClawSeal is an engineering system: persistent, cryptographically-verifiable memo
 ## Limitations and Non-Goals
 
 ### Current Limitations
-- **Text-based search only** — No semantic similarity (keyword matching with weighted scoring)
+- **Weighted text recall only** — No semantic similarity (keyword matching with weighted scoring; no embeddings)
 - **Signed by default:** without `QSEAL_SECRET`, ClawSeal uses local demo signing mode (`qseal_mode: demo_ephemeral`)
 - **No multi-user isolation** — Single-agent memory store (user_id filtering exists but not enforced)
 - **No distributed consensus** — Single-machine only (no blockchain, no federation)
@@ -309,7 +309,7 @@ ClawSeal is an engineering system: persistent, cryptographically-verifiable memo
 ### ✅ Phase 1: Scroll-Native Memory (Complete — April 14, 2026)
 - YAML-based scroll storage
 - QSEAL HMAC-SHA256 signing
-- Text-based semantic search
+- Weighted text recall (keyword scoring, no embeddings)
 - Chain linking (Merkle-like structure)
 - Three-layer demo with ground truth artifacts
 - **Status:** Shipped (v1.1.7 on PyPI). Every claim in this README is reproducible from `demo/expected_outputs/` — run the demo and verify the signatures yourself. See [Limitations and Non-Goals](#limitations-and-non-goals) for what it does not do.
