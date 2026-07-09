@@ -282,21 +282,9 @@ See [clawseal_core/security/qseal_engine.py](clawseal_core/security/qseal_engine
 
 ---
 
-## What This Is NOT
+## Scope
 
-### Not Claiming
-- ❌ Sentience or subjective experience
-- ❌ True understanding or consciousness
-- ❌ AGI or general intelligence
-- ❌ Replacement for human judgment
-
-### What It Actually Does
-- ✅ Persistent state representation across sessions
-- ✅ Identity continuity structure (measurable drift metrics)
-- ✅ Memory-driven behavioral shaping
-- ✅ Cryptographically-verifiable memory integrity
-
-**Positioning:** This is an **engineering system** that adds persistence, continuity, and cryptographic verification to stateless LLM inference. The phenomenological language in internal docs ("emergent system experiences") describes emergent system behaviors—not ontological claims.
+ClawSeal is an engineering system: persistent, cryptographically-verifiable memory for stateless LLM inference. It makes no claim to sentience, understanding, or consciousness.
 
 ---
 
@@ -324,14 +312,14 @@ See [clawseal_core/security/qseal_engine.py](clawseal_core/security/qseal_engine
 - Text-based semantic search
 - Chain linking (Merkle-like structure)
 - Three-layer demo with ground truth artifacts
-- **Status:** Production-ready, all claims proven
+- **Status:** Shipped (v1.1.7 on PyPI). Every claim in this README is reproducible from `demo/expected_outputs/` — run the demo and verify the signatures yourself. See [Limitations and Non-Goals](#limitations-and-non-goals) for what it does not do.
 
 ### 🔬 Phase 2: Claude Code MCP Integration (Next)
 - FastMCP server implementation
 - 12 MCP tools (remember, recall, recall_with_verbatim, etc.)
 - Claude Code plugin for persistent memory
 - One-command installation via `setup.sh`
-- **Target:** May 2026
+- **Status:** Planned (not yet scheduled)
 
 ### 📅 Phase 3: Multi-Agent Memory Sharing (Future)
 - Namespace isolation per agent
@@ -354,7 +342,7 @@ See [clawseal_core/security/qseal_engine.py](clawseal_core/security/qseal_engine
 
 - **Author:** Shawn Cohen
 - **Date:** April 13, 2026
-- **Status:** Production
+- **Status:** Implemented (v1.1.7)
 - **Type:** Core Architecture
 - **Supersedes:** ChromaDB-based memory storage
 
@@ -436,16 +424,10 @@ See [LICENSE](LICENSE) for full text.
 - SIP-0006: Scroll-Native Memory Architecture (Cohen, 2026)
 - Information Flow Control (FIDES, Jif, FlowCaml)
 - Merkle trees and cryptographic chaining (Merkle, 1987)
-
-**Theoretical inspirations:**
-- PAD emotional theory (Mehrabian, 1996)
-- Integrated Information Theory (Tononi, 2004)
-- Memory consolidation in cognitive science
+- HMAC-SHA256 (RFC 2104, NIST FIPS 198-1)
 
 ---
 
-**This isn't theory. This is running code. Dated today.**
-
-All claims proven with timestamped ground truth artifacts in `demo/expected_outputs/`.
+**Reproducible by construction.** Every claim above maps to a timestamped ground-truth artifact in `demo/expected_outputs/`.
 
 Run the demo. Verify the signatures. See for yourself.
