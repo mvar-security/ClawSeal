@@ -1,4 +1,4 @@
-# MIRRA EOS Demo Run - Ground Truth Outputs
+# ClawSeal Demo Run - Ground Truth Outputs
 
 **Date:** April 14, 2026
 **QSEAL Secret:** test_secret_key_for_demo (32 chars)
@@ -9,22 +9,22 @@
 
 ## Demo Execution Summary
 
-This directory contains the **ground truth outputs** from the MIRRA EOS three-layer demonstration. These outputs represent the canonical proof artifacts referenced in CLAIMS_REGISTRY.md.
+This directory contains the **ground truth outputs** from the ClawSeal three-layer demonstration. These outputs represent the canonical evidence artifacts referenced in CLAIMS_REGISTRY.md.
 
 ### Files
 
 1. **layer1_baseline_output.txt** (60 lines)
-   - Layer 1: Identity Drift Without MIRRA
-   - Demonstrates 100% identity drift across 5 sessions
+   - Layer 1: Identity Drift Without ClawSeal
+   - Baseline sessions cannot recover prior stored facts across runs (4/4 transitions show drift)
    - 4/4 drift events detected
-   - Zero memory persistence
+   - No memory persistence between sessions
 
 2. **layer2_with_mirra_output.txt** (84 lines)
-   - Layer 2: Identity Continuity With MIRRA EOS
-   - Demonstrates 0% identity drift with Scroll-native memory
+   - Layer 2: Identity Continuity With ClawSeal
+   - ClawSeal preserves signed memory continuity across sessions (prior facts recalled and QSEAL-verified)
    - 2 memories created, both QSEAL signed
-   - 3/4 stability events (75% stability rate)
-   - Perfect memory persistence
+   - 3/4 stability events across the run
+   - Prior facts recalled across sessions
 
 3. **layer3_verification_output.txt** (115 lines)
    - Layer 3: QSEAL Cryptographic Verification
@@ -39,19 +39,19 @@ This directory contains the **ground truth outputs** from the MIRRA EOS three-la
 
 ### Layer 1 (Baseline)
 - [x] 5 sessions simulated
-- [x] Each session shows complete amnesia
+- [x] Each session fails to recover prior stored facts
 - [x] Identity signature changes every session
-- [x] 100% drift rate confirmed
+- [x] Drift observed on every session transition (4/4)
 
-### Layer 2 (MIRRA)
+### Layer 2 (ClawSeal)
 - [x] 5 sessions simulated with Scroll memory
 - [x] Memory creation: 2 scrolls (preference + fact)
 - [x] QSEAL signatures generated (HMAC-SHA256)
 - [x] Chain linking: Scroll 2 references Scroll 1 as parent
 - [x] Recall verification: All memories QSEAL verified
-- [x] 0% drift across majority of sessions
+- [x] Prior facts recalled across the majority of sessions
 
-### Layer 3 (Cryptographic Proof)
+### Layer 3 (Cryptographic Verification)
 - [x] Raw YAML scroll displayed (human-readable)
 - [x] QSEAL signature verified via `verify_signature()`
 - [x] Chain structure confirmed (parent lineage)
@@ -96,34 +96,34 @@ Three critical security fixes were applied before this demo run:
 
 ---
 
-## Claims Proven
+## Claims and Evidence
 
 ### Claim 1: Identity Drift Without Memory
 **Evidence:** `layer1_baseline_output.txt` lines 11-55
 - Every session shows ⚠️ IDENTITY DRIFT DETECTED
-- 100% amnesia rate
+- No prior facts recovered in any session
 - Identity signature changes completely each session
 
-### Claim 2: Memory Continuity With MIRRA
+### Claim 2: Memory Continuity With ClawSeal
 **Evidence:** `layer2_with_mirra_output.txt` lines 11-77
 - 2 memories created with QSEAL signatures
 - Memory retrieval shows `QSEAL Verified: ✅ True`
-- 3/4 sessions show ✅ IDENTITY STABLE (0% drift)
-- Perfect memory persistence across sessions
+- 3/4 sessions show ✅ IDENTITY STABLE
+- Prior facts recalled across sessions
 
 ### Claim 3: Cryptographic Tamper-Evidence
 **Evidence:** `layer3_verification_output.txt` lines 1-115
 - QSEAL signature verification: ✅ SIGNATURE VALID
 - Chain verification: ✅ CHAIN LINKED
 - Tampering detection: ❌ SIGNATURE INVALID (immediate detection)
-- HMAC-SHA256 cryptographic proof
+- HMAC-SHA256 cryptographic tamper-evidence
 
 ---
 
-## Architecture Proven
+## Architecture Demonstrated
 
 - ✅ **Zero ChromaDB dependency** - Pure YAML files
-- ✅ **Zero vector database** - Text-based keyword search
+- ✅ **Zero vector database** - Weighted text recall (keyword scoring, no embeddings)
 - ✅ **HMAC-SHA256 signatures** - Tamper-evident sealing
 - ✅ **Chain linking** - Merkle-like continuity structure
 - ✅ **Human-readable storage** - YAML scrolls, Git-friendly
@@ -142,7 +142,7 @@ Three critical security fixes were applied before this demo run:
 
 ---
 
-**This directory is the source of truth for all MIRRA EOS demo claims.**
+**This directory is the source of truth for all ClawSeal demo claims.**
 **Every claim in documentation must trace back to these verified outputs.**
 
 ---

@@ -370,8 +370,10 @@ Yes, with caveats:
 
 ### What's the performance?
 - **Scroll creation:** ~1-2ms (HMAC signing + YAML write)
-- **Recall (text search):** ~10-50ms for 100 scrolls, ~100-500ms for 1,000 scrolls (linear scan)
+- **Recall (weighted text recall):** ~10-50ms for 100 scrolls, ~100-500ms for 1,000 scrolls (linear scan)
 - **Verification:** ~1ms per scroll (HMAC recomputation)
+
+Approximate, order-of-magnitude figures from development runs — not a controlled benchmark. Measure on your own hardware.
 
 For >10,000 scrolls, add indexing (planned for Phase 3).
 
